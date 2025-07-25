@@ -94,12 +94,5 @@
 
 
 </div>
-<div *ngIf="boletosEncontrados.length > 0" class="resultados">
-  <h3>Boletos del comprador:</h3>
-  <ul>
-    <li *ngFor="let b of boletosEncontrados">
-      Boleto #{{ b.numero }} - Estado: {{ b.estado }}
-    </li>
-  </ul>
-</div>
+
 <app-menu-bottom></app-menu-bottom>
