@@ -26,23 +26,36 @@
   <div class="stat">
     <span class="dot libres"></span>
     <div class="label">LIBRES</div>
-    <div class="value">60</div>
+  <div class="value">{{ libres }}</div>
   </div>
   <div class="stat">
     <span class="dot pagados"></span>
     <div class="label">PAGADOS</div>
-    <div class="value">834</div>
+  <div class="value">{{ pagados }}</div>
   </div>
   <div class="stat">
     <span class="dot apartados"></span>
     <div class="label">APARTADOS</div>
-    <div class="value">20</div>
+  <div class="value">{{ apartados }}</div>
   </div>
 </div>
 
 
 
-<div class="actions">
+
+<div class="search-container">
+  <i class="fa fa-search"></i>
+<input
+  type="text"
+  placeholder="Buscar por teléfono"
+  [(ngModel)]="telefonoIngresado"
+  (ngModelChange)="onTelefonoChange(telefonoIngresado)"
+/>
+
+  <i class="fa fa-filter"></i>
+</div>
+
+<div class="actions" *ngIf="mostrarResultados">
   <button class="btn green">
     <i class="fa-brands fa-whatsapp"></i>
     <span>ENVIAR INFO</span>
@@ -59,28 +72,34 @@
 
 
 
+<div class="tickets" *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length ==10"
+>
+  <ng-container *ngFor="let estado of estadosDisponibles">
+    <ng-container *ngIf="filtrarPorEstado(estado).length > 0">
+      <h3 class="titulo-estado">{{ estado | titlecase }}</h3>
 
-
-
-<div class="search-container">
-  <i class="fa fa-search"></i>
-  <input type="text" placeholder="Search..." />
-  <i class="fa fa-filter"></i>
+      <div class="tickets-grid">
+        <app-boleto-item
+          *ngFor="let boleto of filtrarPorEstado(estado)"
+          [numero]="boleto.numero"
+          [estado]="boleto.estado"
+          [pequeno]="true"
+          [mostrarCerrar]="false"
+          (toggle)="onToggleBoleto(boleto)"
+        ></app-boleto-item>
+      </div>
+    </ng-container>
+  </ng-container>
 </div>
 
 
-
-  <!-- Ticket -->
-  <div class="ticket-card">
-    <div class="badge">Pagado</div>
-    <div class="ticket-number">#104</div>
-    <div class="opportunities-label">Oportunidades</div>
-    <div class="tags">
-      <span class="tag">00489</span>
-      <span class="tag">25308</span>
-      <span class="tag">34695</span>
-      <span class="tag">55306</span>
-    </div>
-  </div>
+</div>
+<div *ngIf="boletosEncontrados.length > 0" class="resultados">
+  <h3>Boletos del comprador:</h3>
+  <ul>
+    <li *ngFor="let b of boletosEncontrados">
+      Boleto #{{ b.numero }} - Estado: {{ b.estado }}
+    </li>
+  </ul>
 </div>
 <app-menu-bottom></app-menu-bottom>
