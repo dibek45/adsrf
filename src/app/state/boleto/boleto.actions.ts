@@ -28,3 +28,7 @@ export const deseleccionarYLiberarBoleto = createAction(
   props<{ boletoId: string }>()
 );
 export const resetSeleccion = createAction('[Boleto] Reset Selección');
+export const updateBoleto = createAction(
+  '[Boleto] Update Boleto',
+  props<{ boleto: Boleto }>()
+);

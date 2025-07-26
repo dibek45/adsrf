@@ -1,0 +1,21 @@
+<div class="search-container">
+  <input
+    type="text"
+    placeholder="Buscar por teléfono..."
+    [(ngModel)]="telefono"
+    (ngModelChange)="buscarPorTelefono()"
+  />
+  <span class="clear-btn" *ngIf="telefono" (click)="limpiarTelefono()">✕</span>
+</div>
+
+
+<div class="resultados" *ngIf="resultados.length > 0">
+  <div class="item" *ngFor="let boleto of resultados" (click)="seleccionarBoleto(boleto)">
+  <div class="info">
+    <strong>{{ boleto.comprador?.nombre || 'Sin nombre' }}</strong>
+    <small>{{ boleto.comprador?.telefono }}</small>
+  </div>
+  <span class="estado" [ngClass]="boleto.estado">{{ boleto.estado }}</span>
+</div>
+
+</div>

@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class BoletoItemComponent01 {
   @Input() pequeno = false;
 @Output() seleccionCambio = new EventEmitter<{ numero: string }[]>();
+@Input() permitirTodosLosEstados = false;
 
 @Input() mostrarCerrar = false; // 🔥 controla si mostrar la "X"
 
@@ -24,18 +25,21 @@ export class BoletoItemComponent01 {
 
 
 onToggle() {
-  if (this.estado === 'ocupado') {
-    alert('⚠️ Este boleto ya está apartado');
-    return;
+  if (!this.permitirTodosLosEstados) {
+    if (this.estado === 'ocupado') {
+      alert('⚠️ Este boleto ya está apartado');
+      return;
+    }
+
+    if (this.estado === 'pagado') {
+      alert('💰 Este boleto ya fue pagado');
+      return;
+    }
   }
 
-  if (this.estado === 'pagado') {
-    alert('💰 Este boleto ya fue pagado');
-    return;
-  }
-
-  this.toggle.emit(); // solo emite si está disponible
+  this.toggle.emit();
 }
+
 
 onCerrarClick(event: MouseEvent) {
   event.stopPropagation(); // evita que dispare el onToggle

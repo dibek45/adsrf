@@ -66,6 +66,13 @@
     console.log('🟥 REDUCER (NO recomendado):', actualizado);
     return actualizado;
   }),
+on(BoletoActions.updateBoleto, (state, { boleto }) => ({
+  ...state,
+  boletos: state.boletos.map(b => b.id === boleto.id ? boleto : b),
+  boletosSeleccionados: state.boletosSeleccionados.map(b =>
+    b.id === boleto.id ? boleto : b
+  )
+})),
 
 
 

@@ -1,0 +1,16 @@
+<div class="overlay" (click)="cerrar()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h2>Cambiar estado del boleto</h2>
+    <p><strong>#{{ boleto.numero }}</strong></p>
+
+    <div class="estados">
+  <button (click)="cambiarEstado('disponible')">Disponible</button>
+  <button (click)="cambiarEstado('ocupado')">Ocupado</button>
+  <button (click)="cambiarEstado('pagado')">Pagado</button>
+</div>
+
+
+    <button class="cerrar-btn" (click)="cerrar()">Cancelar</button>
+  </div>
+</div>
+

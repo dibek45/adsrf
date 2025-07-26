@@ -44,4 +44,11 @@ getBoletos(): Observable<Boleto[]> {
       })
     );
   }
+
+
+  updateBoleto(boleto: Boleto): Observable<Boleto> {
+  const url = `${this.apiUrl}/${boleto.id}`;
+  return this.http.patch<Boleto>(url, { estado: boleto.estado });
+}
+
 }

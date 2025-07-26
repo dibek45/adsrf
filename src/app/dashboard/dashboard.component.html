@@ -42,18 +42,13 @@
 
 
 
+<app-search-number
+  (telefonoChange)="onTelefonoChange($event)"
+  [boletos]="boletos"
+></app-search-number>
 
-<div class="search-container">
-  <i class="fa fa-search"></i>
-<input
-  type="text"
-  placeholder="Buscar por teléfono"
-  [(ngModel)]="telefonoIngresado"
-  (ngModelChange)="onTelefonoChange(telefonoIngresado)"
-/>
 
-  <i class="fa fa-filter"></i>
-</div>
+
 
 <div class="actions" *ngIf="mostrarResultados">
   <button class="btn green">
@@ -70,6 +65,11 @@
   </button>
 </div>
 
+<div *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length == 10">
+  <h3 class="titulo-cliente">
+    {{ boletosEncontrados[0]?.comprador?.nombre || 'Sin nombre' }}
+  </h3>
+</div>
 
 
 <div class="tickets" *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length ==10"
@@ -79,14 +79,17 @@
       <h3 class="titulo-estado">{{ estado | titlecase }}</h3>
 
       <div class="tickets-grid">
-        <app-boleto-item
-          *ngFor="let boleto of filtrarPorEstado(estado)"
-          [numero]="boleto.numero"
-          [estado]="boleto.estado"
-          [pequeno]="true"
-          [mostrarCerrar]="false"
-          (toggle)="onToggleBoleto(boleto)"
-        ></app-boleto-item>
+      <app-boleto-item
+  *ngFor="let boleto of filtrarPorEstado(estado)"
+  [numero]="boleto.numero"
+  [estado]="boleto.estado"
+  [pequeno]="true"
+  [mostrarCerrar]="false"
+  [permitirTodosLosEstados]="true"
+  (toggle)="onToggleBoleto(boleto)"
+  [ngClass]="{ 'highlight': boleto.id === boletoActualizadoId }"
+/>
+
       </div>
     </ng-container>
   </ng-container>
@@ -94,5 +97,15 @@
 
 
 </div>
+<app-cambiar-estado-modal
+  *ngIf="modalBoleto"
+  [boleto]="modalBoleto"
+  (estadoSeleccionado)="onEstadoSeleccionado($event)"
+></app-cambiar-estado-modal>
+<div class="overlay-loading" *ngIf="actualizandoBoleto">
+  <div class="spinner"></div>
+</div>
+
+<app-menu-bottom></app-menu-bottom>
 
 <app-menu-bottom></app-menu-bottom>
