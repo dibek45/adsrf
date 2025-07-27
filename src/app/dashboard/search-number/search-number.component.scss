@@ -77,3 +77,38 @@
 .item:hover {
   background: #f0f0f0;
 }
+.resultados {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.item {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:hover {
+    background: #efefef;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .badge {
+    background-color: #2196f3;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    height: fit-content;
+    align-self: center;
+  }
+}

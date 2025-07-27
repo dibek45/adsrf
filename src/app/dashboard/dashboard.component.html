@@ -43,57 +43,79 @@
 
 
 <app-search-number
-  (telefonoChange)="onTelefonoChange($event)"
   [boletos]="boletos"
+  (compradorSeleccionado)="onCompradorSeleccionado($event)"
 ></app-search-number>
 
 
 
 
-<div class="actions" *ngIf="mostrarResultados">
-  <button class="btn green">
-    <i class="fa-brands fa-whatsapp"></i>
-    <span>ENVIAR INFO</span>
-  </button>
-  <button class="btn blue">
-    <i class="fa-solid fa-ticket-simple"></i>
-    <span>Pasar a apartar</span>
-  </button>
-  <button class="btn white">
-    <i class="fa-regular fa-file"></i>
-    <span>Liberar</span>
-  </button>
+
+
+<div *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length == 10" class="cliente-wrapper">
+  <div class="info-cliente">
+    <h3 class="nombre">
+      {{ boletosEncontrados[0]?.comprador?.nombre || 'Sin nombre' }}
+    </h3>
+    <p class="telefono">
+      {{ boletosEncontrados[0]?.comprador?.telefono }}
+    </p>
+
+    <div class="resumen-estados">
+      <span class="estado">
+        <span class="dot ocupado"></span>
+        Ocupados: {{ boletosOcupados.length }}
+      </span>
+      <span class="estado">
+        <span class="dot pagado"></span>
+        Pagados: {{ boletosPagados.length }}
+      </span>
+      <span class="estado">
+        <span class="dot utiles"></span>
+        Total útiles: {{ boletosNoDisponibles.length }}
+      </span>
+    </div>
+  </div>
+
+<div class="telefono-wp-btn" (click)="enviarInfo()">
+  <i class="fa-brands fa-whatsapp"></i>
+  <span>{{ boletosEncontrados[0]?.comprador?.telefono }}</span>
 </div>
 
-<div *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length == 10">
-  <h3 class="titulo-cliente">
-    {{ boletosEncontrados[0]?.comprador?.nombre || 'Sin nombre' }}
-  </h3>
 </div>
+
 
 
 <div class="tickets" *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length ==10"
 >
   <ng-container *ngFor="let estado of estadosDisponibles">
-    <ng-container *ngIf="filtrarPorEstado(estado).length > 0">
-      <h3 class="titulo-estado">{{ estado | titlecase }}</h3>
+    <br>
+  <ng-container *ngIf="filtrarPorEstado(estado).length > 0">
 
-      <div class="tickets-grid">
+    <div class="estado-header">
+      <h3 class="titulo-estado">
+        {{ estado === 'disponible' ? 'Ya no asignado' : (estado | titlecase) }}: {{ filtrarPorEstado(estado).length }}
+      </h3>
+      <button class="btn-icon" (click)="cambiarTodos(estado)">
+        <i class="fa-solid fa-right-left"></i>
+      </button>
+    </div>
+
+    <div class="tickets-grid">
       <app-boleto-item
-  *ngFor="let boleto of filtrarPorEstado(estado)"
-  [numero]="boleto.numero"
-  [estado]="boleto.estado"
-  [pequeno]="true"
-  [mostrarCerrar]="false"
-  [permitirTodosLosEstados]="true"
-  (toggle)="onToggleBoleto(boleto)"
-  [ngClass]="{ 'highlight': boleto.id === boletoActualizadoId }"
-/>
+        *ngFor="let boleto of filtrarPorEstado(estado)"
+        [numero]="boleto.numero"
+        [estado]="boleto.estado"
+        [pequeno]="true"
+        [mostrarCerrar]="false"
+        [permitirTodosLosEstados]="true"
+        (toggle)="onToggleBoleto(boleto)"
+        [ngClass]="{ 'highlight': boleto.id === boletoActualizadoId }"
+      />
+    </div>
 
-      </div>
-    </ng-container>
   </ng-container>
-</div>
+</ng-container>
 
 
 </div>

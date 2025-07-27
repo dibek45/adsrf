@@ -97,15 +97,9 @@
       border-radius: 3px;
       margin-bottom: 4px;
 
-      &.libres {
-        background: #333;
-      }
-      &.pagados {
-        background: #4caf50;
-      }
-      &.apartados {
-        background: #2196f3;
-      }
+      &.libres { background: #333; }
+      &.pagados { background: #4caf50; }
+      &.apartados { background: #2196f3; }
     }
 
     .label {
@@ -154,21 +148,9 @@
       font-weight: 500;
     }
 
-    &.green {
-      background: #25d366;
-      color: #fff;
-    }
-
-    &.blue {
-      background: #2196f3;
-      color: #fff;
-    }
-
-    &.white {
-      background: #fff;
-      color: #333;
-      border: 1px solid #ddd;
-    }
+    &.green { background: #25d366; color: #fff; }
+    &.blue { background: #2196f3; color: #fff; }
+    &.white { background: #fff; color: #333; border: 1px solid #ddd; }
 
     &:hover {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
@@ -179,79 +161,6 @@
       transform: translateY(1px);
     }
   }
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  background: #f1f1f1;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin: 20px 0;
-  padding: 12px 16px;
-  gap: 12px;
-
-  i {
-    font-size: 16px;
-    color: #666;
-    cursor: pointer;
-
-    &:last-child {
-      margin-left: auto;
-    }
-  }
-
-  input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-size: 14px;
-    outline: none;
-
-    &::placeholder {
-      color: #888;
-    }
-  }
-}
-
-.btn {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.btn i {
-  margin-right: 6px;
-}
-
-.green {
-  background: #25d366;
-}
-
-.blue {
-  background: #2196f3;
-}
-
-.white {
-  background: #eee;
-  color: #333;
-}
-
-.btn:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-}
-
-.btn:active {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transform: translateY(1px);
 }
 
 .overlay-loading {
@@ -277,7 +186,123 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
+  to { transform: rotate(360deg); }
+}
+
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.cliente-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+
+  .info-cliente {
+    margin-top: 10px;
+    flex: 1;
+
+    .nombre {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .telefono {
+      margin: 2px 0 10px 0;
+      color: #555;
+      font-size: 0.95rem;
+    }
+  }
+
+  .telefono-wp-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #25d366;
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  width: 100%;
+  margin-top: 60px;
+  max-width: 140px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  i {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  span {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+}
+
+.resumen-estados {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+
+  .estado {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .ocupado { background-color: #2563eb; }
+  .pagado { background-color: #22c55e; }
+  .utiles { background-color: #ec4899; }
+}
+
+.estado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 4px;
+
+  .titulo-estado {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .btn-icon {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      color: #000;
+    }
   }
 }

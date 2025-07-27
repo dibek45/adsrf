@@ -1,16 +1,13 @@
 <div class="overlay" (click)="cerrar()">
   <div class="modal" (click)="$event.stopPropagation()">
+    <button class="cerrar-icono" (click)="cerrar()">×</button>
     <h2>Cambiar estado del boleto</h2>
-    <p><strong>#{{ boleto.numero }}</strong></p>
+    <p>#{{ boleto.numero }}</p>
 
     <div class="estados">
-  <button (click)="cambiarEstado('disponible')">Disponible</button>
-  <button (click)="cambiarEstado('ocupado')">Ocupado</button>
-  <button (click)="cambiarEstado('pagado')">Pagado</button>
-</div>
-
-
-    <button class="cerrar-btn" (click)="cerrar()">Cancelar</button>
+      <button class="boleto-btn disponible" (click)="cambiarEstado('disponible')">Disponible</button>
+      <button class="boleto-btn ocupado" (click)="cambiarEstado('ocupado')">Ocupado</button>
+      <button class="boleto-btn pagado" (click)="cambiarEstado('pagado')">Pagado</button>
+    </div>
   </div>
 </div>
-

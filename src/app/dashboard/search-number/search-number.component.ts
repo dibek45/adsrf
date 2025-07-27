@@ -12,36 +12,75 @@ import { Boleto } from '../../state/boleto/boleto.model';
 })
 export class SearchNumberComponent {
   @Input() boletos: Boleto[] = [];
-@Output() telefonoChange = new EventEmitter<string>();
+
+  @Output() telefonoChange = new EventEmitter<string>();
+  @Output() compradorSeleccionado = new EventEmitter<{ telefono: string, compradorId: number }>();
 
   telefono: string = '';
-  resultados: Boleto[] = [];
 
- buscarPorTelefono() {
+  resultados: {
+    comprador: Boleto['comprador'];
+    cantidad: number;
+  }[] = [];
+
+buscarPorTelefono() {
   const tel = this.telefono.trim();
 
   if (tel.length < 3) {
     this.resultados = [];
-    this.telefonoChange.emit(''); // ⚠️ para limpiar también en el padre
+    this.telefonoChange.emit('');
     return;
   }
 
-  this.resultados = this.boletos.filter(
-    b => b.comprador?.telefono?.includes(tel)
-  );
+  const map = new Map<number, { comprador: Boleto['comprador'], cantidad: number }>();
 
-  this.telefonoChange.emit(tel); // 🔥 importante para notificar al padre
-}
-seleccionarBoleto(boleto: Boleto) {
-  const telefonoCompleto = boleto.comprador?.telefono?.trim() || '';
-  this.telefono = telefonoCompleto;
-  this.telefonoChange.emit(telefonoCompleto); // 🔥 notifica al padre
-  this.resultados = []; // limpia los resultados después de seleccionar
-}
-limpiarTelefono() {
-  this.telefono = '';
-  this.resultados = [];
-  this.telefonoChange.emit('');
+  for (const b of this.boletos) {
+    const comprador = b.comprador;
+    const match = comprador?.telefono?.includes(tel);
+  if (match && comprador?.id && b.estado !== 'disponible') {
+  const current = map.get(comprador.id);
+  if (current) {
+    current.cantidad++;
+  } else {
+    map.set(comprador.id, {
+      comprador,
+      cantidad: 1
+    });
+  }
 }
 
+  }
+
+  this.resultados = Array.from(map.values());
+  this.telefonoChange.emit(tel);
+
+  // 🚀 Si escribieron un número completo y solo hay un resultado: seleccionar automáticamente
+  if (tel.length === 10 && this.resultados.length === 1) {
+    const resultado = this.resultados[0];
+    this.compradorSeleccionado.emit({
+      telefono: resultado.comprador?.telefono?.trim() || '',
+      compradorId: resultado.comprador?.id!
+    });
+    this.resultados = [];
+  }
+}
+
+
+  limpiarTelefono() {
+    this.telefono = '';
+    this.resultados = [];
+    this.telefonoChange.emit('');
+  }
+
+  seleccionarPorComprador(comprador: Boleto['comprador']) {
+    const telefonoCompleto = comprador?.telefono?.trim() || '';
+    if (comprador?.id) {
+      this.compradorSeleccionado.emit({
+        telefono: telefonoCompleto,
+        compradorId: comprador.id
+      });
+    }
+    this.telefono = telefonoCompleto;
+    this.resultados = [];
+  }
 }

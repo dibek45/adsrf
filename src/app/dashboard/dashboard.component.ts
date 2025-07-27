@@ -11,6 +11,7 @@ import { BoletoItemComponent01 } from './boleto-item-new-01/boleto-item.componen
 import { SearchNumberComponent } from './search-number/search-number.component';
 import { CambiarEstadoModalComponent } from './cambiar-estado-modal/cambiar-estado-modal.component';
 import { BoletoService } from '../state/boleto/boleto.service';
+import { WhatsAppService } from '../services/whatsapp.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +23,10 @@ import { BoletoService } from '../state/boleto/boleto.service';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+cambiarTodos(_t49: string) {
+throw new Error('Method not implemented.');
+}
+
 
   telefonoBuscado: string = '';
 
@@ -43,7 +48,7 @@ modalBoleto: Boleto | null = null;
 
 telefonoIngresado: string = '';
 
-  constructor(private store: Store, private boletoService: BoletoService) {}
+  constructor(private store: Store, private boletoService: BoletoService,private whatsAppService: WhatsAppService) {}
 numeroBuscado: string = '';
 boletosEncontrados: Boleto[] = [];
 
@@ -63,9 +68,7 @@ onTelefonoChange(numero: string) {
   const encontrados = this.boletos.filter(
     b =>
       b.comprador?.telefono?.trim().includes(telefono) &&
-      b.comprador?.nombre?.trim() &&
-      b.estado !== 'disponible'
-  );
+      b.comprador?.nombre?.trim()   );
 
   console.log('📋 Encontrados (sin filtrar duplicados):', encontrados);
 
@@ -88,13 +91,12 @@ onTelefonoChange(numero: string) {
 
 
 
-estadosDisponibles = ['pagado', 'ocupado', 'reservado', 'cancelado']; // añade más si quieres
-
-filtrarPorEstado(estado: string) {
-  return this.boletosEncontrados.filter(b =>
-    b.comprador?.telefono?.length === 10 && b.estado === estado
-  );
+estadosDisponibles = ['pagado', 'ocupado', 'reservado', 'cancelado', 'disponible'];
+filtrarPorEstado(estado: string): Boleto[] {
+  return this.boletosEncontrados.filter(b => b.estado === estado);
 }
+
+
 
 
 ngOnInit(): void {
@@ -145,7 +147,13 @@ onEstadoSeleccionado(nuevoEstado: 'disponible' | 'ocupado' | 'pagado' | null) {
   this.boletoService.updateBoleto(actualizado).subscribe({
     next: () => {
       this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
-      this.onTelefonoChange(this.numeroBuscado);
+this.boletosEncontrados = this.boletos.filter(
+  b => b.comprador?.id === this.modalBoleto?.comprador?.id
+);
+
+
+this.calcularTotales();
+
       this.boletoActualizadoId = actualizado.id;
 
       setTimeout(() => {
@@ -164,6 +172,40 @@ onEstadoSeleccionado(nuevoEstado: 'disponible' | 'ocupado' | 'pagado' | null) {
   });
 }
 
+onCompradorSeleccionado(info: { telefono: string; compradorId: number }) {
+  this.numeroBuscado = info.telefono;
+
+  // Filtrar todos los boletos del comprador por ID
+  this.boletosEncontrados = this.boletos.filter(
+    b => b.comprador?.id === info.compradorId
+  );
+
+  this.mostrarResultados = true;
+
+  console.log('🎯 Comprador seleccionado:', info, this.boletosEncontrados);
+}
+get boletosPagados(): Boleto[] {
+  return this.boletosEncontrados.filter(b => b.estado === 'pagado');
+}
+
+get boletosOcupados(): Boleto[] {
+  return this.boletosEncontrados.filter(b => b.estado === 'ocupado');
+}
+
+get boletosNoDisponibles(): Boleto[] {
+  return this.boletosEncontrados.filter(b => b.estado !== 'disponible');
+}
+
+
+
+enviarInfo(): void {
+  const comprador = this.boletosEncontrados[0]?.comprador;
+  if (comprador?.telefono) {
+    this.whatsAppService.enviarMensajeDeConsulta(comprador.nombre, comprador.telefono);
+  } else {
+    alert('No se encontró el teléfono del comprador.');
+  }
+}
 
 }
 
