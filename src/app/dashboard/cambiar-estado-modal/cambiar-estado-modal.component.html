@@ -4,10 +4,23 @@
     <h2>Cambiar estado del boleto</h2>
     <p>#{{ boleto.numero }}</p>
 
+    <!-- Info del comprador -->
+    <div *ngIf="boleto.estado === 'ocupado' || boleto.estado === 'pagado'" class="info-comprador">
+      <p>👤 <strong>Cliente:</strong> {{ boleto.comprador?.nombre || 'Desconocido' }}</p>
+      <p>📞 <strong>Teléfono:</strong> {{ boleto.comprador?.telefono || 'N/A' }}</p>
+      <p>🗓️ <strong>Fecha compra:</strong> {{ boleto.fechaCompra }}</p>
+    </div>
+
     <div class="estados">
-      <button class="boleto-btn disponible" (click)="cambiarEstado('disponible')">Disponible</button>
-      <button class="boleto-btn ocupado" (click)="cambiarEstado('ocupado')">Ocupado</button>
-      <button class="boleto-btn pagado" (click)="cambiarEstado('pagado')">Pagado</button>
+      <button
+        class="boleto-btn disponible"
+        (click)="cambiarEstado('disponible')">Disponible</button>
+      <button
+        class="boleto-btn ocupado"
+        (click)="cambiarEstado('ocupado')">Ocupado</button>
+      <button
+        class="boleto-btn pagado"
+        (click)="cambiarEstado('pagado')">Pagado</button>
     </div>
   </div>
 </div>

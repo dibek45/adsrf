@@ -26,6 +26,7 @@ export class DashboardComponent {
 cambiarTodos(_t49: string) {
 throw new Error('Method not implemented.');
 }
+estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
 
   telefonoBuscado: string = '';
@@ -207,6 +208,24 @@ enviarInfo(): void {
   }
 }
 
+
+filtrarPorDashboard(estado: 'disponible' | 'pagado' | 'ocupado') {
+  console.log('📥 Filtro seleccionado:', estado);
+
+  this.estadoFiltrado = estado;
+
+  this.boletosEncontrados = this.boletos.filter(b => b.estado === estado);
+
+  console.log(`🎯 Boletos filtrados (${estado}):`, this.boletosEncontrados);
+
+  this.numeroBuscado = ''; // Limpiar campo de búsqueda
+
+  console.log('🔄 númeroBuscado reseteado');
+}
+
+mostrarInfoBoleto(boleto: Boleto) {
+  alert(`🎟️ Boleto #${boleto.numero}\nEstado: ${boleto.estado.toUpperCase()}\nComprador: ${boleto.comprador?.nombre || 'Sin nombre'}\nTeléfono: ${boleto.comprador?.telefono || 'Sin teléfono'}`);
+}
 }
 
 

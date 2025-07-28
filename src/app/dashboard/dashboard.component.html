@@ -23,20 +23,20 @@
 
 
 <div class="stats">
-  <div class="stat">
+  <div class="stat" (click)="filtrarPorDashboard('disponible')">
     <span class="dot libres"></span>
     <div class="label">LIBRES</div>
-  <div class="value">{{ libres }}</div>
+    <div class="value">{{ libres }}</div>
   </div>
-  <div class="stat">
+  <div class="stat" (click)="filtrarPorDashboard('pagado')">
     <span class="dot pagados"></span>
     <div class="label">PAGADOS</div>
-  <div class="value">{{ pagados }}</div>
+    <div class="value">{{ pagados }}</div>
   </div>
-  <div class="stat">
+  <div class="stat" (click)="filtrarPorDashboard('ocupado')">
     <span class="dot apartados"></span>
     <div class="label">APARTADOS</div>
-  <div class="value">{{ apartados }}</div>
+    <div class="value">{{ apartados }}</div>
   </div>
 </div>
 
@@ -86,7 +86,7 @@
 
 
 
-<div class="tickets" *ngIf="boletosEncontrados.length > 0 && numeroBuscado?.length ==10"
+<div class="tickets" *ngIf="boletosEncontrados.length > 0 && (numeroBuscado?.length == 10 || estadoFiltrado)">
 >
   <ng-container *ngFor="let estado of estadosDisponibles">
     <br>
