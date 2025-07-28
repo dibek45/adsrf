@@ -87,7 +87,7 @@
 
 
 <div class="tickets" *ngIf="boletosEncontrados.length > 0 && (numeroBuscado?.length == 10 || estadoFiltrado)">
->
+
   <ng-container *ngFor="let estado of estadosDisponibles">
     <br>
   <ng-container *ngIf="filtrarPorEstado(estado).length > 0">
