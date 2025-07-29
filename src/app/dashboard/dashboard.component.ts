@@ -149,12 +149,16 @@ onEstadoSeleccionado(nuevoEstado: 'disponible' | 'ocupado' | 'pagado' | null) {
   this.boletoService.updateBoleto(actualizado).subscribe({
     next: () => {
       this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
-this.boletosEncontrados = this.boletos.filter(
-  b => b.comprador?.id === this.modalBoleto?.comprador?.id
-);
+this.boletos = this.boletos.map(b => b.id === actualizado.id ? actualizado : b); // actualiza array local
 
+if (this.estadoFiltrado) {
+  this.filtrarPorDashboard(this.estadoFiltrado);
+} else if (this.numeroBuscado.trim()) {
+  this.onTelefonoChange(this.numeroBuscado);
+}
 
 this.calcularTotales();
+
 
       this.boletoActualizadoId = actualizado.id;
 
@@ -230,8 +234,9 @@ mostrarInfoBoleto(boleto: Boleto) {
 
 
 esReasignacion(boleto: Boleto): boolean {
-  const resultado = boleto.estado === 'disponible' && boleto.comprador !== null;
-  console.log('🧪 ¿Es reasignación?', resultado, 'Estado:', boleto.estado, 'Comprador:', boleto.comprador);
+  // Si está disponible, entonces debe mostrar el formulario
+  const resultado = boleto.estado === 'disponible';
+  console.log('🧪 ¿Es reasignación/asignación?', resultado, 'Estado:', boleto.estado, 'Comprador:', boleto.comprador);
   return resultado;
 }
 
@@ -251,8 +256,18 @@ onReasignar(data: { boleto: Boleto; nombre: string; telefono: string }) {
   this.boletoService.updateBoleto(actualizado).subscribe({
     next: () => {
       this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
-      this.modalBoleto = null;
-      this.actualizandoBoleto = false;
+      this.boletos = this.boletos.map(b => b.id === actualizado.id ? actualizado : b);
+
+        if (this.estadoFiltrado) {
+          this.filtrarPorDashboard(this.estadoFiltrado);
+        } else if (this.numeroBuscado.trim()) {
+          this.onTelefonoChange(this.numeroBuscado);
+        }
+
+        this.modalBoleto = null;
+        this.actualizandoBoleto = false;
+        this.calcularTotales();
+
     },
     error: () => {
       alert('❌ Error al reasignar el boleto');
