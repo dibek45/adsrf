@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MenuBottomComponent } from '../menu-bottom/menu-bottom.component';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -28,6 +28,7 @@ throw new Error('Method not implemented.');
 }
 estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
+@Input() reasignacion: boolean = false;
 
   telefonoBuscado: string = '';
 
@@ -225,6 +226,43 @@ filtrarPorDashboard(estado: 'disponible' | 'pagado' | 'ocupado') {
 
 mostrarInfoBoleto(boleto: Boleto) {
   alert(`🎟️ Boleto #${boleto.numero}\nEstado: ${boleto.estado.toUpperCase()}\nComprador: ${boleto.comprador?.nombre || 'Sin nombre'}\nTeléfono: ${boleto.comprador?.telefono || 'Sin teléfono'}`);
+}
+
+
+esReasignacion(boleto: Boleto): boolean {
+  const resultado = boleto.estado === 'disponible' && boleto.comprador !== null;
+  console.log('🧪 ¿Es reasignación?', resultado, 'Estado:', boleto.estado, 'Comprador:', boleto.comprador);
+  return resultado;
+}
+
+onReasignar(data: { boleto: Boleto; nombre: string; telefono: string }) {
+  this.actualizandoBoleto = true;
+
+  const actualizado: Boleto = {
+    ...data.boleto,
+    estado: 'ocupado', // o el estado que desees poner
+    comprador: {
+      ...data.boleto.comprador,
+      nombre: data.nombre,
+      telefono: data.telefono
+    }
+  };
+
+  this.boletoService.updateBoleto(actualizado).subscribe({
+    next: () => {
+      this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
+      this.modalBoleto = null;
+      this.actualizandoBoleto = false;
+    },
+    error: () => {
+      alert('❌ Error al reasignar el boleto');
+      this.actualizandoBoleto = false;
+    }
+  });
+}
+
+ngOnChanges() {
+  console.log('🧪 Reasignación recibida:', this.reasignacion);
 }
 }
 

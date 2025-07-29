@@ -101,3 +101,58 @@
     }
   }
 }
+.alerta-reasignacion {
+  background-color: #fff8db;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e200;
+}
+
+.botones-si-no {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  .btn-si, .btn-no {
+    flex: 1;
+    padding: 0.5rem;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-si {
+    background-color: #22c55e;
+    color: white;
+  }
+
+  .btn-no {
+    background-color: #ef4444;
+    color: white;
+  }
+}
+
+.formulario-reasignacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  input {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .btn-reasignar {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}

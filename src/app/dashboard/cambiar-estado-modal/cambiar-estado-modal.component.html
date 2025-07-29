@@ -4,23 +4,47 @@
     <h2>Cambiar estado del boleto</h2>
     <p>#{{ boleto.numero }}</p>
 
-    <!-- Info del comprador -->
+    <!-- ⚠️ Advertencia inicial -->
+    <div *ngIf="reasignacion && !confirmado" class="alerta-reasignacion">
+      <p>⚠️ <strong>Este boleto fue previamente asignado a:</strong></p>
+      <ul>
+        <li><strong>Nombre:</strong> {{ boleto.comprador?.nombre }}</li>
+        <li><strong>Teléfono:</strong> {{ boleto.comprador?.telefono }}</li>
+      </ul>
+      <p>¿Deseas reasignarlo?</p>
+
+      <div class="botones-si-no">
+        <button (click)="confirmado = true" class="btn-si">Sí</button>
+        <button (click)="cerrar()" class="btn-no">No</button>
+      </div>
+    </div>
+
+    <!-- ✅ Formulario de reasignación + botones -->
+    <div *ngIf="reasignacion && confirmado" class="formulario-reasignacion">
+      <label for="nombre">Nuevo nombre</label>
+      <input id="nombre" type="text" [(ngModel)]="nuevoNombre" placeholder="Ej. Juan Pérez" />
+
+      <label for="telefono">Nuevo teléfono</label>
+      <input id="telefono" type="text" [(ngModel)]="nuevoTelefono" placeholder="Ej. 1234567890" />
+
+      <div class="estados">
+        <button class="boleto-btn ocupado" (click)="emitirReasignacionConEstado('ocupado')">✅ Reasignar como Ocupado</button>
+        <button class="boleto-btn pagado" (click)="emitirReasignacionConEstado('pagado')">💰 Reasignar como Pagado</button>
+      </div>
+    </div>
+
+    <!-- 👁 Info previa (si aplica) -->
     <div *ngIf="boleto.estado === 'ocupado' || boleto.estado === 'pagado'" class="info-comprador">
       <p>👤 <strong>Cliente:</strong> {{ boleto.comprador?.nombre || 'Desconocido' }}</p>
       <p>📞 <strong>Teléfono:</strong> {{ boleto.comprador?.telefono || 'N/A' }}</p>
       <p>🗓️ <strong>Fecha compra:</strong> {{ boleto.fechaCompra }}</p>
     </div>
 
-    <div class="estados">
-      <button
-        class="boleto-btn disponible"
-        (click)="cambiarEstado('disponible')">Disponible</button>
-      <button
-        class="boleto-btn ocupado"
-        (click)="cambiarEstado('ocupado')">Ocupado</button>
-      <button
-        class="boleto-btn pagado"
-        (click)="cambiarEstado('pagado')">Pagado</button>
+    <!-- Botones normales si no es reasignación -->
+    <div *ngIf="!reasignacion" class="estados">
+      <button class="boleto-btn disponible" (click)="cambiarEstado('disponible')">Disponible</button>
+      <button class="boleto-btn ocupado" (click)="cambiarEstado('ocupado')">Ocupado</button>
+      <button class="boleto-btn pagado" (click)="cambiarEstado('pagado')">Pagado</button>
     </div>
   </div>
 </div>

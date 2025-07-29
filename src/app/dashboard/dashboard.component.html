@@ -122,8 +122,13 @@
 <app-cambiar-estado-modal
   *ngIf="modalBoleto"
   [boleto]="modalBoleto"
+  [reasignacion]="esReasignacion(modalBoleto)"
   (estadoSeleccionado)="onEstadoSeleccionado($event)"
+  (reasignar)="onReasignar($event)"
 ></app-cambiar-estado-modal>
+
+
+
 <div class="overlay-loading" *ngIf="actualizandoBoleto">
   <div class="spinner"></div>
 </div>
