@@ -47,7 +47,8 @@ ${fraseAleatoria}
 
 
   private enviarMensaje(numero: string, mensaje: string) {
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
-  }
+  const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensaje)}`;
+  window.open(url, '_blank');
+}
+
 }
