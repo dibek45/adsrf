@@ -8,6 +8,8 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class SocketService {
+
+    
   private socket = io(environment.socketUrl, {
     transports: ['websocket'],
   });

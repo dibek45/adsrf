@@ -14,6 +14,7 @@ import { BoletoService } from '../state/boleto/boleto.service';
 import { WhatsAppService } from '../services/whatsapp.service';
 import { BoletoSyncService } from '../sockets/boleto-sync.service';
 import { SocketService } from '../sockets/socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -110,6 +111,7 @@ estadosDisponibles = ['pagado', 'ocupado', 'reservado', 'cancelado', 'disponible
 filtrarPorEstado(estado: string): Boleto[] {
   return this.boletosEncontrados.filter(b => b.estado === estado);
 }
+  private sub: Subscription = new Subscription();
 
 
 
@@ -117,6 +119,15 @@ filtrarPorEstado(estado: string): Boleto[] {
 ngOnInit(): void {
   // 🟢 ¡Dispara la acción para cargar los boletos!
 
+  this.sub.add(
+      this.socketService.boletoUpdated$.subscribe((boleto: Boleto) => {
+        alert('♻️ Recibido desde socket, actualizando store:');
+      })
+    );
+
+ this.socketService.boletoUpdated$.subscribe((boleto) => {
+    console.log('🧨 SOCKET RECIBIDO DESDE COMPONENTE:', boleto);
+  });
 
     const sorteoId = 68; // o de tus inputs, store, ruta, etc.
 

@@ -15,13 +15,14 @@ export class BoletoSyncService {
     private toastService: ToastService
   ) {}
 
- listenToSocketUpdates(sorteoId: number) {
+listenToSocketUpdates(sorteoId: number) {
+  console.log('👂 Suscribiéndome a socket...');
+
   this.socketService.boletoUpdated$.subscribe((updated: Boleto) => {
-    console.log('📥 RECIBIDO desde socket:', updated); // Esto debe aparecer
+    console.log('📨 Recibido en BoletoSyncService:', updated);
 
     if (Number(updated.sorteo?.id) !== Number(sorteoId)) return;
 
-    this.toastService.show('¡Boleto actualizado!');
     this.store.select(selectAllBoletos).pipe(take(1)).subscribe((boletos) => {
       const nuevaLista = [
         ...boletos.filter((b) => b.id !== updated.id),
