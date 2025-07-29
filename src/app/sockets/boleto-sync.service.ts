@@ -24,6 +24,14 @@ listenToSocketUpdates(sorteoId: number) {
     if (Number(updated.sorteo?.id) !== Number(sorteoId)) return;
 
     this.store.select(selectAllBoletos).pipe(take(1)).subscribe((boletos) => {
+      const existente = boletos.find((b) => b.id === updated.id);
+
+      // Evita el loop infinito: no actualices si no hay cambios
+      if (existente && JSON.stringify(existente) === JSON.stringify(updated)) {
+        console.log('🔁 Boleto ya estaba igual, no se actualiza store.');
+        return;
+      }
+
       const nuevaLista = [
         ...boletos.filter((b) => b.id !== updated.id),
         updated,
@@ -34,5 +42,6 @@ listenToSocketUpdates(sorteoId: number) {
     });
   });
 }
+
 
 }

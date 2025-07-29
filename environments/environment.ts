@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  socketUrl: 'https://api.dibeksolutions.com' // ejemplo real en producción
+  socketUrl: 'wss://api.sorteos.sa.dibeksolutions.com', // 👈 ESTE ES EL CORRECTO
 
 };

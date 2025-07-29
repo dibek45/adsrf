@@ -117,30 +117,38 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 ngOnInit(): void {
-  // 🟢 ¡Dispara la acción para cargar los boletos!
+  const sorteoId = 68; // Puedes obtenerlo dinámico si quieres
 
-  this.sub.add(
-      this.socketService.boletoUpdated$.subscribe((boleto: Boleto) => {
-        alert('♻️ Recibido desde socket, actualizando store:');
-      })
-    );
-
- this.socketService.boletoUpdated$.subscribe((boleto) => {
-    console.log('🧨 SOCKET RECIBIDO DESDE COMPONENTE:', boleto);
-  });
-
-    const sorteoId = 68; // o de tus inputs, store, ruta, etc.
-
+  // 🟢 Conectar al WebSocket y unirse a la sala del sorteo
   this.socketService.joinSorteoRoom(sorteoId);
-  setTimeout(() => {
-    this.boletoSyncService.listenToSocketUpdates(sorteoId);
-  }, 300); // Espera a que el join sea procesado
+  this.boletoSyncService.listenToSocketUpdates(sorteoId);
 
+  // 📡 Suscribirse a eventos del socket en tiempo real
+  this.sub.add(
+    this.socketService.boletoUpdated$.subscribe((boleto) => {
+      console.log('♻️ SOCKET RECIBIDO:', boleto);
 
+      // Actualiza el store
+      this.store.dispatch(BoletoActions.updateBoleto({ boleto }));
 
+      // Actualiza el array local
+      this.boletos = this.boletos.map(b => b.id === boleto.id ? boleto : b);
+
+      // Reaplica filtros si es necesario
+      if (this.estadoFiltrado) {
+        this.filtrarPorDashboard(this.estadoFiltrado);
+      } else if (this.numeroBuscado.trim()) {
+        this.onTelefonoChange(this.numeroBuscado);
+      }
+
+      this.calcularTotales();
+    })
+  );
+
+  // 🚀 Dispara acción para cargar todos los boletos al inicio
   this.store.dispatch(BoletoActions.loadBoletos());
 
-  // 👀 Escucha el store hasta que lleguen los boletos
+  // 👁️ Escucha cambios del store
   this.store.select(selectAllBoletos).subscribe(boletos => {
     if (boletos.length === 0) return;
 
@@ -149,6 +157,7 @@ ngOnInit(): void {
     this.calcularTotales();
   });
 }
+
 
 
   onBuscarClick() {
