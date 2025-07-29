@@ -121,7 +121,12 @@ ngOnInit(): void {
     const sorteoId = 68; // o de tus inputs, store, ruta, etc.
 
   this.socketService.joinSorteoRoom(sorteoId);
-  this.boletoSyncService.listenToSocketUpdates(sorteoId);
+  setTimeout(() => {
+    this.boletoSyncService.listenToSocketUpdates(sorteoId);
+  }, 300); // Espera a que el join sea procesado
+
+
+
   this.store.dispatch(BoletoActions.loadBoletos());
 
   // 👀 Escucha el store hasta que lleguen los boletos
