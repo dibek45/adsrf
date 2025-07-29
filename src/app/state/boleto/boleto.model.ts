@@ -2,13 +2,15 @@ export interface Boleto {
   id: string;
   numero: string;
   precio: number;
-  estado: 'disponible' | 'ocupado' | 'pagado';
+  estado: 'disponible' | 'seleccionado' | 'ocupado' | 'pagado';
   metodoPago: string | null;
   fechaCompra: string | null;
   compradorId: number;
   vendedorId: number | null;
   comprador: Comprador;
   vendedor: Vendedor | null;
+    sorteo?: Sorteo; // ✅ esto agrega compatibilidad con el HTML
+
 }
 
 export interface Comprador {
@@ -19,8 +21,12 @@ export interface Comprador {
   createdAt: string;
 }
 
+export interface Sorteo {
+  id: string;
+  nombre: string;
+  // otros campos si tienes
+}
 export interface Vendedor {
   id: number;
   nombre: string;
-  // agrega más si los necesitas
 }

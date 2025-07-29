@@ -12,6 +12,8 @@ import { SearchNumberComponent } from './search-number/search-number.component';
 import { CambiarEstadoModalComponent } from './cambiar-estado-modal/cambiar-estado-modal.component';
 import { BoletoService } from '../state/boleto/boleto.service';
 import { WhatsAppService } from '../services/whatsapp.service';
+import { BoletoSyncService } from '../sockets/boleto-sync.service';
+import { SocketService } from '../sockets/socket.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,7 +52,18 @@ modalBoleto: Boleto | null = null;
 
 telefonoIngresado: string = '';
 
-  constructor(private store: Store, private boletoService: BoletoService,private whatsAppService: WhatsAppService) {}
+  constructor(private store: Store,
+     private boletoService: BoletoService,
+     private whatsAppService: WhatsAppService,
+       private socketService: SocketService,
+  private boletoSyncService: BoletoSyncService
+    ) {}
+
+
+
+
+
+
 numeroBuscado: string = '';
 boletosEncontrados: Boleto[] = [];
 
@@ -103,6 +116,12 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 ngOnInit(): void {
   // 🟢 ¡Dispara la acción para cargar los boletos!
+
+
+    const sorteoId = 1; // o de tus inputs, store, ruta, etc.
+
+  this.socketService.joinSorteoRoom(sorteoId);
+  this.boletoSyncService.listenToSocketUpdates(sorteoId);
   this.store.dispatch(BoletoActions.loadBoletos());
 
   // 👀 Escucha el store hasta que lleguen los boletos
