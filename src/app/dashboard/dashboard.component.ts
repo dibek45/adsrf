@@ -115,7 +115,6 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 
-
 ngOnInit(): void {
   const sorteoId = 68; // Puedes obtenerlo dinámico si quieres
 
@@ -126,15 +125,24 @@ ngOnInit(): void {
   // 📡 Suscribirse a eventos del socket en tiempo real
   this.sub.add(
     this.socketService.boletoUpdated$.subscribe((boleto) => {
-      console.log('♻️ SOCKET RECIBIDO:', boleto);
+      console.log('📨 SOCKET RECIBIDO:', boleto);
 
-      // Actualiza el store
-this.store.dispatch(BoletoActions.updateBoletoEnStore({ boleto }));
+      // ⚠️ Validar si ya está igual en local
+      const actual = this.boletos.find(b => b.id === boleto.id);
+      const esIgual = actual && JSON.stringify(actual) === JSON.stringify(boleto);
 
-      // Actualiza el array local
+      if (esIgual) {
+        console.log('🔁 Boleto ya estaba igual, no se actualiza store.');
+        return;
+      }
+
+      // ✅ Actualiza el store solo si cambió
+      this.store.dispatch(BoletoActions.updateBoletoEnStore({ boleto }));
+
+      // 🔄 Actualiza el array local
       this.boletos = this.boletos.map(b => b.id === boleto.id ? boleto : b);
 
-      // Reaplica filtros si es necesario
+      // 🔁 Reaplica filtros si es necesario
       if (this.estadoFiltrado) {
         this.filtrarPorDashboard(this.estadoFiltrado);
       } else if (this.numeroBuscado.trim()) {
