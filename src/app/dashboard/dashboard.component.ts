@@ -138,30 +138,27 @@ ngOnInit(): void {
 
       // ✅ Actualiza el store solo si cambió
       this.store.dispatch(BoletoActions.updateBoletoEnStore({ boleto }));
-
-      // 🔄 Actualiza el array local
-      this.boletos = this.boletos.map(b => b.id === boleto.id ? boleto : b);
-
-      // 🔁 Reaplica filtros si es necesario
-      if (this.estadoFiltrado) {
-        this.filtrarPorDashboard(this.estadoFiltrado);
-      } else if (this.numeroBuscado.trim()) {
-        this.onTelefonoChange(this.numeroBuscado);
-      }
-
-      this.calcularTotales();
     })
   );
 
   // 🚀 Dispara acción para cargar todos los boletos al inicio
   this.store.dispatch(BoletoActions.loadBoletos());
 
-  // 👁️ Escucha cambios del store
+  // 👁️ Escucha cambios del store y sincroniza la vista
   this.store.select(selectAllBoletos).subscribe(boletos => {
     if (boletos.length === 0) return;
 
     console.log('📦 Boletos cargados desde el store:', boletos);
     this.boletos = boletos;
+
+    // 🔁 Reaplica filtros activos si hay
+    if (this.estadoFiltrado) {
+      this.filtrarPorDashboard(this.estadoFiltrado);
+    } else if (this.numeroBuscado.trim()) {
+      this.onTelefonoChange(this.numeroBuscado);
+    }
+
+    // 🔢 Recalcula contadores
     this.calcularTotales();
   });
 }
