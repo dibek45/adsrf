@@ -20,7 +20,7 @@ listenToSocketUpdates(sorteoId: number) {
 
   this.socketService.boletoUpdated$.subscribe((updated: Boleto) => {
     console.log('📨 Recibido en BoletoSyncService:', updated);
-
+  this.toastService.show(`Boleto actualizado: ${updated.numero}`, 3000);
     if (Number(updated.sorteo?.id) !== Number(sorteoId)) return;
 
     this.store.select(selectAllBoletos).pipe(take(1)).subscribe((boletos) => {
