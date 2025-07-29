@@ -118,7 +118,7 @@ ngOnInit(): void {
   // 🟢 ¡Dispara la acción para cargar los boletos!
 
 
-    const sorteoId = 1; // o de tus inputs, store, ruta, etc.
+    const sorteoId = 68; // o de tus inputs, store, ruta, etc.
 
   this.socketService.joinSorteoRoom(sorteoId);
   this.boletoSyncService.listenToSocketUpdates(sorteoId);
