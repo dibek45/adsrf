@@ -129,7 +129,7 @@ ngOnInit(): void {
       console.log('♻️ SOCKET RECIBIDO:', boleto);
 
       // Actualiza el store
-      this.store.dispatch(BoletoActions.updateBoleto({ boleto }));
+this.store.dispatch(BoletoActions.updateBoletoEnStore({ boleto }));
 
       // Actualiza el array local
       this.boletos = this.boletos.map(b => b.id === boleto.id ? boleto : b);

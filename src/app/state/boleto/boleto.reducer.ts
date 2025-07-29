@@ -104,6 +104,13 @@ on(BoletoActions.deseleccionarYLiberarBoleto, (state, { boletoId }) => {
     boletosSeleccionados: seleccionadosActualizados
   };
 }),
+on(BoletoActions.updateBoletoEnStore, (state, { boleto }) => ({
+  ...state,
+  boletos: state.boletos.map(b => b.id === boleto.id ? boleto : b),
+  boletosSeleccionados: state.boletosSeleccionados.map(b =>
+    b.id === boleto.id ? boleto : b
+  )
+})),
 
 
   );

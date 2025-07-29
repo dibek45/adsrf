@@ -32,3 +32,9 @@ export const updateBoleto = createAction(
   '[Boleto] Update Boleto',
   props<{ boleto: Boleto }>()
 );
+
+
+export const updateBoletoEnStore = createAction(
+  '[Boleto] Actualizado desde socket',
+  props<{ boleto: Boleto }>()
+);
