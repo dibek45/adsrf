@@ -111,6 +111,9 @@ on(BoletoActions.updateBoletoEnStore, (state, { boleto }) => ({
     b.id === boleto.id ? boleto : b
   )
 })),
-
+on(BoletoActions.deseleccionarBoletos, (state, { ids }) => ({
+  ...state,
+  boletosSeleccionados: state.boletosSeleccionados.filter(b => !ids.includes(b.id))
+}))
 
   );

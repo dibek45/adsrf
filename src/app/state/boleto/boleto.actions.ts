@@ -38,3 +38,9 @@ export const updateBoletoEnStore = createAction(
   '[Boleto] Actualizado desde socket',
   props<{ boleto: Boleto }>()
 );
+
+
+export const deseleccionarBoletos = createAction(
+  '[Boleto] Deseleccionar Boletos',
+  props<{ ids: string[] }>() // 👈 Usa string[] en lugar de number[]
+);

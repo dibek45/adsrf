@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MenuBottomComponent } from '../menu-bottom/menu-bottom.component';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { selectAllBoletos } from '../state/boleto/boleto.selectors';
+import { selectAllBoletos, selectSelectedBoletos } from '../state/boleto/boleto.selectors';
 import { Boleto } from '../state/boleto/boleto.model';
 import { take } from 'rxjs/operators';
 import * as BoletoActions from '../state/boleto/boleto.actions';
@@ -15,6 +15,7 @@ import { WhatsAppService } from '../services/whatsapp.service';
 import { BoletoSyncService } from '../sockets/boleto-sync.service';
 import { SocketService } from '../sockets/socket.service';
 import { Subscription } from 'rxjs';
+import { ToastService } from '../toast/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,7 +58,9 @@ telefonoIngresado: string = '';
      private boletoService: BoletoService,
      private whatsAppService: WhatsAppService,
        private socketService: SocketService,
-  private boletoSyncService: BoletoSyncService
+  private boletoSyncService: BoletoSyncService,
+      private toastService: ToastService
+  
     ) {}
 
 
@@ -150,6 +153,21 @@ ngOnInit(): void {
 
     console.log('📦 Boletos cargados desde el store:', boletos);
     this.boletos = boletos;
+// 👇 Detectar boletos seleccionados que ya no están disponibles
+this.store.select(selectSelectedBoletos).pipe(take(1)).subscribe(selected => {
+  const boletosRemovidos = selected.filter(sel => {
+    const actualizado = boletos.find(b => b.id === sel.id);
+    return actualizado && actualizado.estado !== 'disponible';
+  });
+
+  if (boletosRemovidos.length > 0) {
+    boletosRemovidos.forEach(b => {
+      this.toastService.show(`❌ Boleto ${b.numero} ya no está disponible (${b.estado})`, 4000);
+    });
+
+    this.store.dispatch(BoletoActions.deseleccionarBoletos({ ids: boletosRemovidos.map(b => b.id) }));
+  }
+});
 
     // 🔁 Reaplica filtros activos si hay
     if (this.estadoFiltrado) {

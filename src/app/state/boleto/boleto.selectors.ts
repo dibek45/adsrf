@@ -17,3 +17,6 @@ export const selectBoletosSeleccionados = createSelector(
   selectBoletoState,
   state => state.boletosSeleccionados
 );
+
+
+
