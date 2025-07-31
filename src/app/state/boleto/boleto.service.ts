@@ -13,7 +13,7 @@ export class BoletoService {
 getBoletos(): Observable<Boleto[]> {
   console.log('⏳ Haciendo petición al API...');
 
-  const request$ = this.http.get<Boleto[]>(this.apiUrl+"44");
+  const request$ = this.http.get<Boleto[]>(this.apiUrl+"1");
 
   // 🔍 Solo para debug, puedes quitarlo después
   request$.subscribe({
