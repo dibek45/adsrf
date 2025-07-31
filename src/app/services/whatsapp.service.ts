@@ -49,7 +49,7 @@ enviarMensajeDeConsulta(nombre: string, telefono: string, sorteoId: number): voi
 🍀 *¡Gracias por participar, ${nombre || 'amig@'}!* 🍀
 
 Puedes consultar tus boletos en el siguiente enlace:
-🔎 https://sorteos.sa.dibeksolutions.com/44/buscar-boleto
+🔎 https://sorteos.sa.dibeksolutions.com/1/buscar-boleto
 
 🎫 *Números pagados:* ${numerosPagados}
 🟡 *Apartados (aún no pagados):* ${numerosOcupados}
