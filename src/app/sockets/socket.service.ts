@@ -21,7 +21,7 @@
 
     constructor() {
         this.socket.on('connect', () => {
-        console.log('🟢 Conectado a WebSocket');
+        console.log('🟢 Conectado a WebSocket'+this.sorteoId);
         if (this.sorteoId) {
             this.joinSorteoRoom(this.sorteoId);
         }

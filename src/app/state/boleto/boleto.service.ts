@@ -7,7 +7,7 @@ import { delay, Observable, of, switchMap, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class BoletoService {
-  private apiUrl = 'https://api.sorteos.sa.dibeksolutions.com/boleto';
+  private apiUrl = 'https://api.sorteos.sa.dibeksolutions.com/boleto/044';
 
   constructor(private http: HttpClient) {}
 getBoletos(): Observable<Boleto[]> {
