@@ -122,7 +122,7 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 ngOnInit(): void {
-  const sorteoId = 44; // Puedes obtenerlo dinámico si quieres
+  const sorteoId = 1; // Puedes obtenerlo dinámico si quieres
 
   // 🟢 Conectar al WebSocket y unirse a la sala del sorteo
   this.socketService.joinSorteoRoom(sorteoId);
