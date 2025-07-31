@@ -16,6 +16,7 @@ import { BoletoSyncService } from '../sockets/boleto-sync.service';
 import { SocketService } from '../sockets/socket.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../toast/toast.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -59,7 +60,9 @@ telefonoIngresado: string = '';
      private whatsAppService: WhatsAppService,
        private socketService: SocketService,
   private boletoSyncService: BoletoSyncService,
-      private toastService: ToastService
+      private toastService: ToastService,
+        private route: ActivatedRoute // ⬅️ Aquí
+
   
     ) {}
 
@@ -272,9 +275,16 @@ get boletosNoDisponibles(): Boleto[] {
 
 
 enviarInfo(): void {
+  const sorteoId = 44
   const comprador = this.boletosEncontrados[0]?.comprador;
+
   if (comprador?.telefono) {
-    this.whatsAppService.enviarMensajeDeConsulta(comprador.nombre, comprador.telefono);
+    console.log('📤 Enviando mensaje con sorteo:', sorteoId);
+    this.whatsAppService.enviarMensajeDeConsulta(
+      comprador.nombre,
+      comprador.telefono,
+      sorteoId // 🔥 le puedes pasar aquí si tu servicio lo acepta
+    );
   } else {
     alert('No se encontró el teléfono del comprador.');
   }

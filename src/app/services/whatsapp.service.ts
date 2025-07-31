@@ -15,34 +15,52 @@ export class WhatsAppService {
   private readonly cuentaSTP = '728969000032810021';
 
 
-  MEJORES_FRASES_SUERTE: string[] = [
-  "La suerte es loca... y a cualquiera le toca 🍀",
-  "Te deseo mucha suerte 🍃",
-  "Que tengas la mejor de las suertes 🙌🏽",
-  "Gracias por participar, suerte 🌀",
-  "¡Mucha suerte desde ya! 💪",
-  "Tienes números potentes, mucha suerte ⚡",
-  "Vamos con toda la suerte 💯",
-  "Confío en tu suerte hoy 🧠🍀",
-  "Tu número puede sorprenderte, mucha suerte!",
-  "Un empujón de suerte para ti 🚀"
-];
-enviarMensajeDeConsulta(nombre: string, telefono: string): void {
-  const fraseAleatoria = this.MEJORES_FRASES_SUERTE[
-    Math.floor(Math.random() * this.MEJORES_FRASES_SUERTE.length)
-  ];
 
-  const mensaje = `
+
+MEJORES_FRASES_SUERTE: string[] = [
+  "LA SUERTE ES LOCA... Y A CUALQUIERA LE TOCA 🍀",
+  "TE DESEO MUCHA SUERTE 🍃",
+  "QUE TENGAS LA MEJOR DE LAS SUERTES 🙌🏽",
+  "GRACIAS POR PARTICIPAR, SUERTE 🌀",
+  "¡MUCHA SUERTE DESDE YA! 💪",
+  "TIENES NÚMEROS POTENTES, MUCHA SUERTE ⚡",
+  "VAMOS CON TODA LA SUERTE 💯",
+  "CONFÍO EN TU SUERTE HOY 🧠🍀",
+  "TU NÚMERO PUEDE SORPRENDERTE, ¡MUCHA SUERTE!",
+  "UN EMPUJÓN DE SUERTE PARA TI 🚀",
+  "EL QUE NO ARRIESGA NO GANA 🎲",
+  "🍀¡GRACIAS POR PARTICIPAR EN NUESTRO SORTEO!🍀\n\nFAVOR DE VERIFICAR TUS BOLETOS QUE ESTÉN EN VERDE EN EL BUSCADOR DE BOLETOS EN EL SIGUIENTE LINK:\n👇🏻👇🏻👇🏻\nhttps://sorteos.sa.dibeksolutions.com/44/boletos\n\n🥠¡TE DESEAMOS MUCHA SUERTE!🍀"
+];
+
+enviarMensajeDeConsulta(nombre: string, telefono: string, sorteoId: number): void {
+  this.store.select(selectBoletosSeleccionados).pipe(take(1)).subscribe((boletos: Boleto[]) => {
+    const fraseAleatoria = this.MEJORES_FRASES_SUERTE[
+      Math.floor(Math.random() * this.MEJORES_FRASES_SUERTE.length)
+    ];
+
+    // 🧾 Separa los boletos
+    const pagados = boletos.filter(b => b.estado === 'pagado');
+    const ocupados = boletos.filter(b => b.estado === 'ocupado');
+
+    const numerosPagados = pagados.map(b => b.numero).join(', ') || 'Ninguno';
+    const numerosOcupados = ocupados.map(b => b.numero).join(', ') || 'Ninguno';
+
+    const mensaje = `
 🍀 *¡Gracias por participar, ${nombre || 'amig@'}!* 🍀
 
 Puedes consultar tus boletos en el siguiente enlace:
-🔎 https://sorteos.sa.dibeksolutions.com/consular-boleto
+🔎 https://sorteos.sa.dibeksolutions.com/44/buscar-boleto
+
+🎫 *Números pagados:* ${numerosPagados}
+🟡 *Apartados (aún no pagados):* ${numerosOcupados}
 
 ${fraseAleatoria}
-`;
+    `;
 
-  this.enviarMensaje(telefono, mensaje);
+    this.enviarMensaje(telefono, mensaje);
+  });
 }
+
 
 
 
