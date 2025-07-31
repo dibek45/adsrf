@@ -7,13 +7,13 @@ import { delay, Observable, of, switchMap, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class BoletoService {
-  private apiUrl = 'https://api.sorteos.sa.dibeksolutions.com/boleto/044';
+  private apiUrl = 'https://api.sorteos.sa.dibeksolutions.com/boleto/';
 
   constructor(private http: HttpClient) {}
 getBoletos(): Observable<Boleto[]> {
   console.log('⏳ Haciendo petición al API...');
 
-  const request$ = this.http.get<Boleto[]>(this.apiUrl);
+  const request$ = this.http.get<Boleto[]>(this.apiUrl+"44");
 
   // 🔍 Solo para debug, puedes quitarlo después
   request$.subscribe({
@@ -47,7 +47,7 @@ getBoletos(): Observable<Boleto[]> {
 
 
   updateBoleto(boleto: Boleto): Observable<Boleto> {
-  const url = `${this.apiUrl}/${boleto.id}`;
+  const url = `${this.apiUrl}${boleto.id}`;
   return this.http.patch<Boleto>(url, { estado: boleto.estado });
 }
 
