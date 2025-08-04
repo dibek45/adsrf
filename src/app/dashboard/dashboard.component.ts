@@ -17,13 +17,14 @@ import { SocketService } from '../sockets/socket.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../toast/toast.service';
 import { ActivatedRoute } from '@angular/router';
+import { MenuSettingsComponent } from './components/menu-settings/menu-settings.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [MenuBottomComponent, 
     CommonModule,
-    FormsModule,BoletoItemComponent01,SearchNumberComponent,CambiarEstadoModalComponent],
+    FormsModule,BoletoItemComponent01,SearchNumberComponent,CambiarEstadoModalComponent,MenuSettingsComponent ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -122,7 +123,11 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 ngOnInit(): void {
-  const sorteoId = 1; // Puedes obtenerlo dinámico si quieres
+const sorteoId = Number(localStorage.getItem('sorteoId'));
+if (!sorteoId) {
+  console.error('❌ No se encontró sorteoId en localStorage');
+  return;
+}
 
   // 🟢 Conectar al WebSocket y unirse a la sala del sorteo
   this.socketService.joinSorteoRoom(sorteoId);
@@ -148,7 +153,7 @@ ngOnInit(): void {
   );
 
   // 🚀 Dispara acción para cargar todos los boletos al inicio
-  this.store.dispatch(BoletoActions.loadBoletos());
+this.store.dispatch(BoletoActions.loadBoletos({ sorteoId }));
 
   // 👁️ Escucha cambios del store y sincroniza la vista
   this.store.select(selectAllBoletos).subscribe(boletos => {
@@ -275,15 +280,17 @@ get boletosNoDisponibles(): Boleto[] {
 
 
 enviarInfo(): void {
-  const sorteoId = 44
-  const comprador = this.boletosEncontrados[0]?.comprador;
+  const sorteoId = Number(localStorage.getItem('sorteoId')); // 🔹 Obtiene el sorteo activo (guardado en login)
+
+  const comprador = this.boletosEncontrados[0]?.comprador; // 🔹 Toma el primer comprador filtrado por teléfono
 
   if (comprador?.telefono) {
     console.log('📤 Enviando mensaje con sorteo:', sorteoId);
+
     this.whatsAppService.enviarMensajeDeConsulta(
       comprador.nombre,
       comprador.telefono,
-      sorteoId // 🔥 le puedes pasar aquí si tu servicio lo acepta
+      sorteoId // 🔥 Aquí manda el ID del sorteo
     );
   } else {
     alert('No se encontró el teléfono del comprador.');
@@ -356,6 +363,14 @@ onReasignar(data: { boleto: Boleto; nombre: string; telefono: string }) {
 ngOnChanges() {
   console.log('🧪 Reasignación recibida:', this.reasignacion);
 }
+
+menuAbierto: boolean = false;
+
+toggleMenu() {
+  this.menuAbierto = !this.menuAbierto;
+}
+
+
 }
 
 

@@ -20,7 +20,7 @@ ngOnChanges(changes: SimpleChanges): void {
 }
 confirmado: boolean = false;
 
-  @Input() boleto!: Boleto;
+@Input() boleto!: Boleto;
 @Output() estadoSeleccionado = new EventEmitter<'disponible' | 'ocupado' | 'pagado' | null>();
 @Input() reasignacion: boolean = false;
 @Output() reasignar = new EventEmitter<{ boleto: Boleto; nombre: string; telefono: string }>();

@@ -10,12 +10,11 @@ export class BoletoService {
   private apiUrl = 'https://api.sorteos.sa.dibeksolutions.com/boleto/';
 
   constructor(private http: HttpClient) {}
-getBoletos(): Observable<Boleto[]> {
-  console.log('⏳ Haciendo petición al API...');
+getBoletos(sorteoId: number): Observable<Boleto[]> {
+  console.log(`⏳ Haciendo petición al API con sorteoId = ${sorteoId}...`);
 
-  const request$ = this.http.get<Boleto[]>(this.apiUrl+"1");
+  const request$ = this.http.get<Boleto[]>(`${this.apiUrl}${sorteoId}`);
 
-  // 🔍 Solo para debug, puedes quitarlo después
   request$.subscribe({
     next: (boletos) => console.log('✅ Respuesta de API:', boletos),
     error: (err) => console.error('❌ Error al llamar API:', err)
@@ -23,6 +22,7 @@ getBoletos(): Observable<Boleto[]> {
 
   return request$;
 }
+
 
  private boletosSimulados: Boleto[] = [
    

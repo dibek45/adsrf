@@ -1,20 +1,22 @@
 <div class="login-container">
   <h1>Iniciar Sesión</h1>
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <input
-      type="text"
-      placeholder="Usuario"
-      name="username"
-      [(ngModel)]="username"
-      required
-    />
-    <input
-      type="password"
-      placeholder="Contraseña"
-      name="password"
-      [(ngModel)]="password"
-      required
-    />
-<button (click)="login()">Entrar</button>
-  </form>
+  <form (ngSubmit)="login(loginForm)" #loginForm="ngForm">
+  <input
+    type="text"
+    placeholder="Usuario"
+    name="username"
+    [(ngModel)]="username"
+    required
+  />
+  <input
+    type="password"
+    placeholder="Contraseña"
+    name="password"
+    [(ngModel)]="password"
+    required
+  />
+  <!-- 👇 Elimina el (click) -->
+  <button type="submit">Entrar</button>
+</form>
+
 </div>

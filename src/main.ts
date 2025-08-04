@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
 // 🧹 Limpieza automática solo en desarrollo
 if (!environment.production) {
   // Limpiar localStorage y sessionStorage
-  localStorage.clear();
+  //localStorage.clear();
   sessionStorage.clear();
 
   // Limpiar cookies

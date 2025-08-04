@@ -16,13 +16,13 @@ export class BoletoEffects {
 loadBoletos$ = createEffect(() =>
   this.actions$.pipe(
     ofType(BoletoActions.loadBoletos),
-    mergeMap(() => {
+    mergeMap(({ sorteoId }) => {
       if (!isPlatformBrowser(this.platformId)) {
         console.log('🚫 SSR: efecto de boletos cancelado');
         return EMPTY;
       }
 
-      return this.boletoService.getBoletos().pipe(
+      return this.boletoService.getBoletos(sorteoId).pipe(
         map(boletos => BoletoActions.loadBoletosSuccess({ boletos })),
         catchError(error => {
           console.error('[Boleto API] Error:', error);
@@ -32,6 +32,7 @@ loadBoletos$ = createEffect(() =>
     })
   )
 );
+
 
 updateBoleto$ = createEffect(() =>
   this.actions$.pipe(

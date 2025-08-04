@@ -1,7 +1,10 @@
 import { createAction, props } from '@ngrx/store';
 import { Boleto } from './boleto.model';
 
-export const loadBoletos = createAction('[Boleto] Load Boletos');
+export const loadBoletos = createAction(
+  '[Boleto] Load Boletos',
+  props<{ sorteoId: number }>()
+);
 
 export const loadBoletosSuccess = createAction(
   '[Boleto] Load Boletos Success',

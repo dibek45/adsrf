@@ -8,9 +8,18 @@
       <i class="fa-solid fa-user-circle"></i>
       Michi666
     </div>
-    <button class="icon-btn">
-      <i class="fa fa-cog"></i>
-    </button>
+
+<!-- Botón del engrane -->
+<button class="icon-btn" (click)="toggleMenu()">
+  <i class="fa fa-cog"></i>
+</button>
+
+<!-- Menú que aparece si está abierto -->
+<app-menu-settings *ngIf="menuAbierto" (cerrar)="toggleMenu()"></app-menu-settings>
+
+
+
+
   </div>
   <div class="bottom-row">
     <img src="assets/logo-rifa.png" alt="Logo" class="logo" />
