@@ -61,7 +61,9 @@ export class LoginComponent {
               return;
             }
 
-            localStorage.setItem('sorteoId', sorteoId);
+localStorage.setItem('nombreUsuario', decoded?.nombre);
+                        localStorage.setItem('sorteoId', sorteoId);
+
             this.router.navigate(['/dashboard']);
 
         } catch (e) {

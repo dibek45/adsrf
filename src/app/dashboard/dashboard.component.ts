@@ -29,9 +29,18 @@ import { MenuSettingsComponent } from './components/menu-settings/menu-settings.
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+
+
 cambiarTodos(_t49: string) {
+
+  
 throw new Error('Method not implemented.');
 }
+
+
+
+nombreUsuario: string = '';
+
 estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
 @Input() reasignacion: boolean = false;
@@ -123,6 +132,8 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 ngOnInit(): void {
+  this.nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
+
 const sorteoId = Number(localStorage.getItem('sorteoId'));
 if (!sorteoId) {
   console.error('❌ No se encontró sorteoId en localStorage');
