@@ -144,6 +144,12 @@
   <div class="spinner"></div>
 </div>
 
-<app-menu-bottom></app-menu-bottom>
 
-<app-menu-bottom></app-menu-bottom>
+<app-sorteo-selector
+  *ngIf="mostrarSelector"
+  [sorteos]="sorteos"
+  (selected)="onSorteoSeleccionado($event)">
+</app-sorteo-selector>
+
+<app-menu-bottom (abrirModalSorteos)="abrirSelectorDeSorteo()"   (abrirMenuConfig)="toggleMenu()">
+

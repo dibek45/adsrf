@@ -16,19 +16,21 @@ import { BoletoSyncService } from '../sockets/boleto-sync.service';
 import { SocketService } from '../sockets/socket.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../toast/toast.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuSettingsComponent } from './components/menu-settings/menu-settings.component';
+import { SorteoSelectorComponent } from '../home/components/sorteo-selector-component/sorteo-selector-component.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [MenuBottomComponent, 
     CommonModule,
-    FormsModule,BoletoItemComponent01,SearchNumberComponent,CambiarEstadoModalComponent,MenuSettingsComponent ],
+    FormsModule,BoletoItemComponent01,SearchNumberComponent,CambiarEstadoModalComponent,MenuSettingsComponent,SorteoSelectorComponent ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  mostrarSelector = false;
 
 
 cambiarTodos(_t49: string) {
@@ -44,6 +46,7 @@ nombreUsuario: string = '';
 estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
 @Input() reasignacion: boolean = false;
+  sorteos: number[] = [];
 
   telefonoBuscado: string = '';
 
@@ -71,7 +74,8 @@ telefonoIngresado: string = '';
        private socketService: SocketService,
   private boletoSyncService: BoletoSyncService,
       private toastService: ToastService,
-        private route: ActivatedRoute // ⬅️ Aquí
+        private route: ActivatedRoute,// ⬅️ Aquí,
+        private router:Router
 
   
     ) {}
@@ -132,6 +136,15 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 ngOnInit(): void {
+
+
+   const sorteosStr = localStorage.getItem('sorteos');
+  if (sorteosStr) {
+    this.sorteos = JSON.parse(sorteosStr);
+    if (this.sorteos.length > 1) {
+      this.abrirSelectorDeSorteo(); // modal si hay más de uno
+    }
+  }
   this.nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
 
 const sorteoId = Number(localStorage.getItem('sorteoId'));
@@ -380,8 +393,17 @@ menuAbierto: boolean = false;
 toggleMenu() {
   this.menuAbierto = !this.menuAbierto;
 }
+abrirSelectorDeSorteo() {
+  this.mostrarSelector = true;
+}
+onSorteoSeleccionado(id: number) {
+localStorage.setItem('sorteoId', id.toString());
+  this.mostrarSelector = false;
 
+  // Si usas rutas como /rifa/:id
+  this.router.navigate(['/rifa', id]);
 
+}
 }
 
 

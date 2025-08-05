@@ -62,9 +62,15 @@ export class LoginComponent {
             }
 
 localStorage.setItem('nombreUsuario', decoded?.nombre);
-                        localStorage.setItem('sorteoId', sorteoId);
+if (decoded?.sorteos?.length) {
+  localStorage.setItem('sorteos', JSON.stringify(decoded.sorteos));
+}
+if (!sorteoId) {
+  this.error = 'Token inválido (sin sorteo)';
+  return;
+}
 
-            this.router.navigate(['/dashboard']);
+this.router.navigate(['/home']);
 
         } catch (e) {
           console.error('❌ Error decoding token:', e);

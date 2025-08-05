@@ -1,0 +1,21 @@
+.dashboard-container {
+  padding: 1rem;
+  min-height: 100vh;
+  background-color: #f1f5f9; // gris azulado claro
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.top-wrapper {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.top-wrapper app-top-buyers,
+.top-wrapper app-top-sellers {
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 140px;
+}

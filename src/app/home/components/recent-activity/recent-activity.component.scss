@@ -1,0 +1,30 @@
+.recent-activity-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.recent-activity-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.recent-activity-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-activity-card li {
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  color: #555;
+}
+
+.recent-activity-card li:last-child {
+  border-bottom: none;
+}

@@ -1,0 +1,36 @@
+
+<app-menu-settings *ngIf="menuAbierto" (cerrar)="toggleMenu()"></app-menu-settings>
+
+<div class="dashboard-container">
+<app-total-raffles
+  [total]="sorteos.length"
+  (selectSorteo)="abrirSelectorDeSorteo()">
+</app-total-raffles>
+
+
+  <app-ticket-status [boletos]="boletos"></app-ticket-status>
+
+  <app-total-revenue [recaudado]="recaudado" [porRecaudar]="porRecaudar"></app-total-revenue>
+
+  <div class="top-wrapper">
+    <app-top-buyers [buyers]="topBuyers"></app-top-buyers>
+    <app-top-sellers [sellers]="topSellers"></app-top-sellers>
+  </div>
+
+  <app-sales-progress [progress]="progresoVentas"></app-sales-progress>
+
+  <app-next-raffle [deadline]="proximoSorteo"></app-next-raffle>
+
+  <app-recent-activity [notificaciones]="actividadReciente"></app-recent-activity>
+</div>
+
+
+<app-sorteo-selector
+  *ngIf="mostrarSelector"
+  [sorteos]="sorteos"
+  (selected)="onSorteoSeleccionado($event)">
+</app-sorteo-selector>
+<app-menu-settings *ngIf="menuAbierto" (cerrar)="toggleMenu()"></app-menu-settings>
+
+<app-menu-bottom (abrirModalSorteos)="abrirSelectorDeSorteo()"   (abrirMenuConfig)="toggleMenu()">
+></app-menu-bottom>
