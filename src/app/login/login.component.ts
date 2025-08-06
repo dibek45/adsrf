@@ -63,8 +63,21 @@ export class LoginComponent {
 
 localStorage.setItem('nombreUsuario', decoded?.nombre);
 if (decoded?.sorteos?.length) {
-  localStorage.setItem('sorteos', JSON.stringify(decoded.sorteos));
+  const sorteosCompletos = decoded.sorteos.map((id: number, index: number) => ({
+    id,
+    nombre: `Sorteo ${id}`,
+    boletos: [],
+    recaudado: 0,
+    porRecaudar: 0,
+    progresoVentas: [],
+    fechaSorteo: new Date(),
+    topBuyers: [],
+    topSellers: [],
+  }));
+
+  localStorage.setItem('sorteos', JSON.stringify(sorteosCompletos));
 }
+
 if (!sorteoId) {
   this.error = 'Token inválido (sin sorteo)';
   return;

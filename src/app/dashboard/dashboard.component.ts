@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MenuBottomComponent } from '../menu-bottom/menu-bottom.component';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { selectAllBoletos, selectSelectedBoletos } from '../state/boleto/boleto.selectors';
+import { selectAllBoletos, selectBoletosPorSorteo, selectBoletosSeleccionadosPorSorteo } from '../state/boleto/boleto.selectors';
 import { Boleto } from '../state/boleto/boleto.model';
 import { take } from 'rxjs/operators';
 import * as BoletoActions from '../state/boleto/boleto.actions';
@@ -32,6 +32,8 @@ import { SorteoSelectorComponent } from '../home/components/sorteo-selector-comp
 export class DashboardComponent {
   mostrarSelector = false;
 
+sorteoId: number = 0;
+  nombreSorteo: any;
 
 cambiarTodos(_t49: string) {
 
@@ -46,8 +48,18 @@ nombreUsuario: string = '';
 estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
 @Input() reasignacion: boolean = false;
-  sorteos: number[] = [];
-
+  // 🔥 ESTE array sí debe tener los datos completos por sorteo:
+  sorteos: {
+    id: number;
+    nombre: string;
+    boletos: any;
+    recaudado: number;
+    porRecaudar: number;
+    progresoVentas: number[];
+    fechaSorteo: string | Date;
+    topBuyers: any[];
+    topSellers: any[];
+  }[] = [];
   telefonoBuscado: string = '';
 
 onToggleBoleto(boleto: Boleto) {
@@ -135,82 +147,103 @@ filtrarPorEstado(estado: string): Boleto[] {
 
 
 
-ngOnInit(): void {
+inicializarSorteo() {
+  this.socketService.joinSorteoRoom(this.sorteoId);
+  this.boletoSyncService.listenToSocketUpdates(this.sorteoId);
 
+  this.store.dispatch(BoletoActions.loadBoletos({ sorteoId: this.sorteoId }));
 
-   const sorteosStr = localStorage.getItem('sorteos');
-  if (sorteosStr) {
-    this.sorteos = JSON.parse(sorteosStr);
-    if (this.sorteos.length > 1) {
-      this.abrirSelectorDeSorteo(); // modal si hay más de uno
-    }
-  }
-  this.nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
-
-const sorteoId = Number(localStorage.getItem('sorteoId'));
-if (!sorteoId) {
-  console.error('❌ No se encontró sorteoId en localStorage');
-  return;
-}
-
-  // 🟢 Conectar al WebSocket y unirse a la sala del sorteo
-  this.socketService.joinSorteoRoom(sorteoId);
-  this.boletoSyncService.listenToSocketUpdates(sorteoId);
-
-  // 📡 Suscribirse a eventos del socket en tiempo real
   this.sub.add(
     this.socketService.boletoUpdated$.subscribe((boleto) => {
-      console.log('📨 SOCKET RECIBIDO:', boleto);
-
-      // ⚠️ Validar si ya está igual en local
       const actual = this.boletos.find(b => b.id === boleto.id);
       const esIgual = actual && JSON.stringify(actual) === JSON.stringify(boleto);
+      if (esIgual) return;
 
-      if (esIgual) {
-        console.log('🔁 Boleto ya estaba igual, no se actualiza store.');
-        return;
-      }
-
-      // ✅ Actualiza el store solo si cambió
-      this.store.dispatch(BoletoActions.updateBoletoEnStore({ boleto }));
+      this.store.dispatch(
+        BoletoActions.updateBoletoEnStore({ sorteoId: this.sorteoId, boleto })
+      );
     })
   );
 
-  // 🚀 Dispara acción para cargar todos los boletos al inicio
-this.store.dispatch(BoletoActions.loadBoletos({ sorteoId }));
-
-  // 👁️ Escucha cambios del store y sincroniza la vista
-  this.store.select(selectAllBoletos).subscribe(boletos => {
+  this.store.select(selectBoletosPorSorteo(this.sorteoId)).subscribe(boletos => {
     if (boletos.length === 0) return;
 
-    console.log('📦 Boletos cargados desde el store:', boletos);
     this.boletos = boletos;
-// 👇 Detectar boletos seleccionados que ya no están disponibles
-this.store.select(selectSelectedBoletos).pipe(take(1)).subscribe(selected => {
-  const boletosRemovidos = selected.filter(sel => {
-    const actualizado = boletos.find(b => b.id === sel.id);
-    return actualizado && actualizado.estado !== 'disponible';
-  });
 
-  if (boletosRemovidos.length > 0) {
-    boletosRemovidos.forEach(b => {
-      this.toastService.show(`❌ Boleto ${b.numero} ya no está disponible (${b.estado})`, 4000);
+    // Verifica si algún boleto seleccionado ya no está disponible
+    this.store.select(selectBoletosSeleccionadosPorSorteo(this.sorteoId)).pipe(take(1)).subscribe(selected => {
+      const boletosRemovidos = selected.filter(sel => {
+        const actualizado = boletos.find(b => b.id === sel.id);
+        return actualizado && actualizado.estado !== 'disponible';
+      });
+
+      if (boletosRemovidos.length > 0) {
+        boletosRemovidos.forEach(b => {
+          this.toastService.show(`❌ Boleto ${b.numero} ya no está disponible (${b.estado})`, 4000);
+        });
+
+        this.store.dispatch(
+          BoletoActions.deseleccionarBoletos({
+            sorteoId: this.sorteoId,
+            ids: boletosRemovidos.map(b => b.id)
+          })
+        );
+      }
     });
 
-    this.store.dispatch(BoletoActions.deseleccionarBoletos({ ids: boletosRemovidos.map(b => b.id) }));
-  }
-});
-
-    // 🔁 Reaplica filtros activos si hay
+    // Aplica filtros si los hay
     if (this.estadoFiltrado) {
       this.filtrarPorDashboard(this.estadoFiltrado);
     } else if (this.numeroBuscado.trim()) {
       this.onTelefonoChange(this.numeroBuscado);
     }
 
-    // 🔢 Recalcula contadores
     this.calcularTotales();
   });
+}
+
+onSorteoSeleccionado(id: number) {
+  const nombre = `Sorteo #${id}`; // O usa el nombre real si lo tienes
+
+  localStorage.setItem('sorteoId', id.toString());
+  localStorage.setItem('sorteoNombre', nombre);
+
+  this.nombreSorteo = nombre; // ⬅️ ¡Actualiza la propiedad que ve el HTML!
+  this.sorteoId = id;
+  this.mostrarSelector = false;
+
+  this.router.navigate(['/rifa', id]);
+}
+
+
+
+ngOnInit(): void {
+  // Cargar los sorteos disponibles (por ejemplo, para el modal)
+  const sorteosStr = localStorage.getItem('sorteos');
+  if (sorteosStr) {
+    this.sorteos = JSON.parse(sorteosStr);
+  }
+
+  this.nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
+
+  this.sub.add(
+    this.route.params.subscribe(params => {
+      const nuevoId = Number(params['id']) || Number(localStorage.getItem('sorteoId'));
+
+      if (!nuevoId) {
+        console.error('❌ No se encontró sorteoId en params ni en localStorage');
+        return;
+      }
+
+      this.sorteoId = nuevoId;
+      localStorage.setItem('sorteoId', this.sorteoId.toString());
+
+      this.inicializarSorteo();
+    })
+  );
+
+  this.nombreSorteo = localStorage.getItem('sorteoNombre') || `Sorteo #${this.sorteoId}`;
+
 }
 
 
@@ -247,7 +280,7 @@ onEstadoSeleccionado(nuevoEstado: 'disponible' | 'ocupado' | 'pagado' | null) {
 
   this.boletoService.updateBoleto(actualizado).subscribe({
     next: () => {
-      this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
+this.store.dispatch(BoletoActions.updateBoleto({ sorteoId: this.sorteoId, boleto: actualizado }));
 this.boletos = this.boletos.map(b => b.id === actualizado.id ? actualizado : b); // actualiza array local
 
 if (this.estadoFiltrado) {
@@ -363,7 +396,7 @@ onReasignar(data: { boleto: Boleto; nombre: string; telefono: string }) {
 
   this.boletoService.updateBoleto(actualizado).subscribe({
     next: () => {
-      this.store.dispatch(BoletoActions.updateBoleto({ boleto: actualizado }));
+this.store.dispatch(BoletoActions.updateBoleto({ sorteoId: this.sorteoId, boleto: actualizado }));
       this.boletos = this.boletos.map(b => b.id === actualizado.id ? actualizado : b);
 
         if (this.estadoFiltrado) {
@@ -396,13 +429,13 @@ toggleMenu() {
 abrirSelectorDeSorteo() {
   this.mostrarSelector = true;
 }
-onSorteoSeleccionado(id: number) {
-localStorage.setItem('sorteoId', id.toString());
+
+
+
+
+
+cerrarModal() {
   this.mostrarSelector = false;
-
-  // Si usas rutas como /rifa/:id
-  this.router.navigate(['/rifa', id]);
-
 }
 }
 

@@ -1,9 +1,10 @@
 .sales-progress-card {
-  background-color: white;
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 1rem;
   font-family: 'Segoe UI', sans-serif;
+    background-color: #f8fafc; // slate-50, un gris azul muy claro
+
 }
 
 .sales-progress-card h3 {
@@ -18,7 +19,6 @@
 
 .progress-bar {
   width: 100%;
-  background-color: #f0f0f0;
   border-radius: 999px;
   overflow: hidden;
   height: 20px;
@@ -32,4 +32,10 @@
   text-align: center;
   white-space: nowrap;
   transition: width 0.3s ease;
+}
+.card {
+  background-color: #f8fafc; // slate-50, un gris azul muy claro
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }

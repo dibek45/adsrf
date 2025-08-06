@@ -55,12 +55,23 @@
       </div>
     </div>
 
-    <!-- 👁 Info del comprador si ya fue comprado -->
-    <div *ngIf="boleto.estado === 'ocupado' || boleto.estado === 'pagado'" class="info-comprador">
-      <p>👤 <strong>Cliente:</strong> {{ boleto.comprador?.nombre || 'Desconocido' }}</p>
-      <p>📞 <strong>Teléfono:</strong> {{ boleto.comprador?.telefono || 'N/A' }}</p>
-      <p>🗓️ <strong>Fecha compra:</strong> {{ boleto.fechaCompra }}</p>
-    </div>
+  <!-- 👁 Info del comprador si ya fue comprado -->
+<div *ngIf="boleto.estado === 'ocupado' || boleto.estado === 'pagado'" class="info-comprador">
+  <p>👤 <strong>Cliente:</strong> {{ boleto.comprador?.nombre || 'Desconocido' }}</p>
+  <p>📞 <strong>Teléfono:</strong> {{ boleto.comprador?.telefono || 'N/A' }}</p>
+  <p>🗓️ <strong>Fecha compra:</strong> {{ boleto.fechaCompra }}</p>
+
+  <!-- ✅ Botón WhatsApp -->
+  <a
+    *ngIf="boleto.comprador?.telefono"
+    [href]="'https://wa.me/52' + boleto.comprador.telefono"
+    class="btn-wp"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <i class="fa-brands fa-whatsapp"></i> Escribir por WhatsApp
+  </a>
+</div>
 
     <!-- Botones de cambiar estado si no es reasignación -->
     <div *ngIf="!reasignacion" class="estados">

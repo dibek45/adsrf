@@ -1,24 +1,36 @@
-<div class="search-container">
-  <input
-    type="text"
-    placeholder="Buscar por teléfono"
-    [(ngModel)]="telefono"
-    (ngModelChange)="buscarPorTelefono()"
-  />
-  <span class="clear-btn" *ngIf="telefono" (click)="limpiarTelefono()">✕</span>
-</div>
-
-<!-- Lista de compradores únicos -->
-<div class="resultados" *ngIf="resultados.length > 0">
-  <div
-    class="item"
-    *ngFor="let resultado of resultados"
-    (click)="seleccionarPorComprador(resultado.comprador)"
-  >
-    <div class="info">
-      <strong>{{ resultado.comprador?.nombre || 'Sin nombre' }}</strong>
-      <small>{{ resultado.comprador?.telefono }}</small>
-    </div>
-    <span class="badge">{{ resultado.cantidad }} boletos</span>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Buscar por teléfono"
+      [(ngModel)]="telefono"
+      (ngModelChange)="buscarPorTelefono()"
+    />
+    <span class="clear-btn" *ngIf="telefono" (click)="limpiarTelefono()">✕</span>
   </div>
-</div>
+
+  <!-- Lista de compradores únicos -->
+  <div class="resultados" *ngIf="resultados.length > 0">
+    <div
+      class="item"
+      *ngFor="let resultado of resultados"
+      (click)="seleccionarPorComprador(resultado.comprador)">
+      
+      <!-- Si vino por número de boleto -->
+      <div class="info" *ngIf="resultado.tipo === 'boleto'">
+        <strong>🎫 Boleto #{{ resultado.numero }}</strong>
+        <small>{{ resultado.comprador?.nombre || 'Sin nombre' }}</small>
+      </div>
+
+      <!-- Si vino por búsqueda de teléfono -->
+      <div class="info" *ngIf="resultado.tipo === 'telefono'">
+        <strong>{{ resultado.comprador?.nombre || 'Sin nombre' }}</strong>
+        <small>{{ resultado.comprador?.telefono }}</small>
+      </div>
+
+      <!-- Muestra badge solo si es tipo teléfono -->
+      <span class="badge" *ngIf="resultado.tipo === 'telefono'">
+        {{ resultado.cantidad }} boletos
+      </span>
+    </div>
+  </div>
+

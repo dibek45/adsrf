@@ -10,22 +10,20 @@ import { Router } from '@angular/router';
 })
 export class MenuBottomComponent {
 @Output() abrirModalSorteos = new EventEmitter<void>();
-  @Output() abrirMenuConfig = new EventEmitter<void>();     // Para Config
+  @Output() abrirMenuConfig = new EventEmitter<void>();
 
     constructor(private router: Router) {}
 
   irAHome() {
-        this.abrirModalSorteos.emit(); // 👈 este sí dispara el (abrirModalSorteos)
+        this.abrirModalSorteos.emit(); 
 }
 
    emitirAbrirMenu() {
-    this.abrirMenuConfig.emit(); // 🔧 Emitir evento para abrir el menú config
+    this.abrirMenuConfig.emit();
   }
-
 
   inicio(){
       this.router.navigate(['/home']);
-
   }
 
 }

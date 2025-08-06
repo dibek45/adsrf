@@ -6,7 +6,7 @@
   <div class="top-row">
     <div class="user">
   <i class="fa-solid fa-user-circle"></i>
-  {{ nombreUsuario }}
+  {{ nombreSorteo }}
 </div>
 
 
@@ -24,7 +24,7 @@
   </div>
   <div class="bottom-row">
     <img src="assets/logo-rifa.png" alt="Logo" class="logo" />
-    <h2>Rifa #01</h2>
+<h2>{{ nombreSorteo }}</h2>
     <button class="icon-btn">
       <i class="fa fa-file-alt"></i> <!-- Icono de reportes -->
     </button>
@@ -54,6 +54,7 @@
 
 <app-search-number
   [boletos]="boletos"
+    (telefonoChange)="onTelefonoChange($event)"
   (compradorSeleccionado)="onCompradorSeleccionado($event)"
 ></app-search-number>
 
@@ -148,8 +149,11 @@
 <app-sorteo-selector
   *ngIf="mostrarSelector"
   [sorteos]="sorteos"
-  (selected)="onSorteoSeleccionado($event)">
+  (selected)="onSorteoSeleccionado($event)"
+  (closed)="cerrarModal()">
 </app-sorteo-selector>
+
+
 
 <app-menu-bottom (abrirModalSorteos)="abrirSelectorDeSorteo()"   (abrirMenuConfig)="toggleMenu()">
 

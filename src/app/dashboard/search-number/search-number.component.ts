@@ -2,6 +2,19 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Boleto } from '../../state/boleto/boleto.model';
+type ResultadoBusqueda =
+  | {
+      comprador: Boleto['comprador'];
+      cantidad: number;
+      tipo: 'boleto';
+      numero: number;
+    }
+  | {
+      comprador: Boleto['comprador'];
+      cantidad: number;
+      tipo: 'telefono';
+    };
+
 
 @Component({
   selector: 'app-search-number',
@@ -18,59 +31,66 @@ export class SearchNumberComponent {
 
   telefono: string = '';
 
-  resultados: {
-    comprador: Boleto['comprador'];
-    cantidad: number;
-  }[] = [];
+  resultados: ResultadoBusqueda[] = [];
+
+  
+
 
 buscarPorTelefono() {
   const tel = this.telefono.trim();
 
-  if (tel.length < 3) {
-    this.resultados = [];
-    this.telefonoChange.emit('');
-    return;
+  this.resultados = [];
+
+  // 🔢 Buscar por número de boleto
+  if (/^\d+$/.test(tel)) {
+    const encontrado = this.boletos.find(b => String(b.numero) === tel);
+    if (encontrado && encontrado.comprador) {
+      this.resultados = [{
+        comprador: encontrado.comprador,
+        cantidad: 1,
+        tipo: 'boleto',
+numero: Number(encontrado.numero),
+      }];
+      this.telefonoChange.emit(tel);
+      return;
+    }
   }
 
-  const map = new Map<number, { comprador: Boleto['comprador'], cantidad: number }>();
+  // 📞 Buscar por teléfono normalmente
+  const map = new Map<number, ResultadoBusqueda>();
 
   for (const b of this.boletos) {
     const comprador = b.comprador;
     const match = comprador?.telefono?.includes(tel);
-  if (match && comprador?.id && b.estado !== 'disponible') {
-  const current = map.get(comprador.id);
-  if (current) {
-    current.cantidad++;
-  } else {
-    map.set(comprador.id, {
-      comprador,
-      cantidad: 1
-    });
-  }
-}
-
+    if (match && comprador?.id && b.estado !== 'disponible') {
+      const current = map.get(comprador.id);
+      if (current) {
+        current.cantidad++;
+      } else {
+        map.set(comprador.id, {
+          comprador,
+          cantidad: 1,
+          tipo: 'telefono'
+        });
+      }
+    }
   }
 
   this.resultados = Array.from(map.values());
   this.telefonoChange.emit(tel);
-
-  // 🚀 Si escribieron un número completo y solo hay un resultado: seleccionar automáticamente
-  if (tel.length === 10 && this.resultados.length === 1) {
-    const resultado = this.resultados[0];
-    this.compradorSeleccionado.emit({
-      telefono: resultado.comprador?.telefono?.trim() || '',
-      compradorId: resultado.comprador?.id!
-    });
-    this.resultados = [];
-  }
 }
 
 
-  limpiarTelefono() {
-    this.telefono = '';
-    this.resultados = [];
-    this.telefonoChange.emit('');
-  }
+
+
+
+limpiarTelefono() {
+  this.telefono = '';
+  this.resultados = [];
+  this.telefonoChange.emit('');
+  console.log('🔄 Teléfono y resultados limpiados');
+}
+
 
   seleccionarPorComprador(comprador: Boleto['comprador']) {
     const telefonoCompleto = comprador?.telefono?.trim() || '';

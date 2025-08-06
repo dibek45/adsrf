@@ -33,12 +33,13 @@ MEJORES_FRASES_SUERTE: string[] = [
 ];
 
 enviarMensajeDeConsulta(nombre: string, telefono: string, sorteoId: number): void {
-  this.store.select(selectBoletosSeleccionados).pipe(take(1)).subscribe((boletos: Boleto[]) => {
+  this.store.select(selectBoletosSeleccionados).pipe(take(1)).subscribe((todosSeleccionados) => {
+    const boletos = todosSeleccionados[sorteoId] || [];
+
     const fraseAleatoria = this.MEJORES_FRASES_SUERTE[
       Math.floor(Math.random() * this.MEJORES_FRASES_SUERTE.length)
     ];
 
-    // 🧾 Separa los boletos
     const pagados = boletos.filter(b => b.estado === 'pagado');
     const ocupados = boletos.filter(b => b.estado === 'ocupado');
 
@@ -49,7 +50,7 @@ enviarMensajeDeConsulta(nombre: string, telefono: string, sorteoId: number): voi
 🍀 *¡Gracias por participar, ${nombre || 'amig@'}!* 🍀
 
 Puedes consultar tus boletos en el siguiente enlace:
-🔎 https://sorteos.sa.dibeksolutions.com/1/buscar-boleto
+🔎 https://sorteos.sa.dibeksolutions.com/${sorteoId}/buscar-boleto
 
 🎫 *Números pagados:* ${numerosPagados}
 🟡 *Apartados (aún no pagados):* ${numerosOcupados}

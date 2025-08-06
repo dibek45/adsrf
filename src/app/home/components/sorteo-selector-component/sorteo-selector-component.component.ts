@@ -11,12 +11,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     <div class="modal-fullscreen">
       <h2 class="modal-title">Tus sorteos disponibles son:</h2>
       <div class="sorteo-list">
-        <button
-          class="sorteo-item"
-          *ngFor="let id of sorteos"
-          (click)="select(id)">
-          Sorteo #{{ id }}
-        </button>
+  <button
+  class="sorteo-item"
+  *ngFor="let sorteo of sorteos"
+  (click)="select(sorteo.id)">
+  {{ sorteo.nombre || 'Sorteo #' + sorteo.id }}
+</button>
+
       </div>
     </div>
   </div>
@@ -76,10 +77,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 })
 export class SorteoSelectorComponent {
-  @Input() sorteos: number[] = [];
-  @Output() selected = new EventEmitter<number>();
+@Input() sorteos: { id: number; nombre: string; [key: string]: any }[] = [];
 
-  select(id: number) {
-    this.selected.emit(id);
-  }
+
+@Output() selected = new EventEmitter<number>();
+
+select(id: number) {
+  this.selected.emit(id);
+}
 }

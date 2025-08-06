@@ -156,3 +156,26 @@
     cursor: pointer;
   }
 }
+.btn-wp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #25d366;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+  text-decoration: none;
+  gap: 8px;
+  font-size: 15px;
+  transition: background-color 0.3s;
+
+  i {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background-color: #1ebe5d;
+  }
+}

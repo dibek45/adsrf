@@ -1,119 +1,140 @@
-  import { createReducer, on } from '@ngrx/store';
-  import * as BoletoActions from './boleto.actions';
-  import { Boleto } from './boleto.model';
+// boleto.reducer.ts
 
-  export interface BoletoState {
-    boletos: Boleto[];
-    boletosSeleccionados: Boleto[];
-  }
+import { createReducer, on } from '@ngrx/store';
+import * as BoletoActions from './boleto.actions';
+import { Boleto } from './boleto.model';
 
-  export const initialState: BoletoState = {
-    boletos: [],
-    boletosSeleccionados: []
-  };
+export interface BoletoState {
+  boletos: { [sorteoId: number]: Boleto[] };
+  boletosSeleccionados: { [sorteoId: number]: Boleto[] };
+}
 
-  export const boletoReducer = createReducer(
-    initialState,
+export const initialState: BoletoState = {
+  boletos: {},
+  boletosSeleccionados: {},
+};
 
-  on(BoletoActions.loadBoletosSuccess, (state, { boletos }) => {
-    const seleccionados = state.boletosSeleccionados;
+export const boletoReducer = createReducer(
+  initialState,
+
+  on(BoletoActions.loadBoletosSuccess, (state, { sorteoId, boletos }) => {
+    const seleccionados = state.boletosSeleccionados[sorteoId] || [];
 
     const boletosActualizados = boletos.map(b => {
       const seleccionado = seleccionados.find(sel => sel.id === b.id);
       return seleccionado ? { ...b, estado: seleccionado.estado } : b;
     });
 
-    // 👇 Aquí se ordena por número
-    const boletosOrdenados = [...boletosActualizados].sort((a, b) => Number(a.numero) - Number(b.numero));
+    const ordenados = [...boletosActualizados].sort((a, b) => Number(a.numero) - Number(b.numero));
 
     return {
       ...state,
-      boletos: boletosOrdenados,
+      boletos: {
+        ...state.boletos,
+        [sorteoId]: ordenados,
+      },
     };
   }),
 
-
-
-    on(BoletoActions.addBoleto, (state, { boleto }) => ({
-      ...state,
-      boletos: [...state.boletos, boleto]
-    })),
-
-    on(BoletoActions.removeBoleto, (state, { boletoId }) => ({
-      ...state,
-      boletos: state.boletos.filter(b => b.id !== boletoId),
-      boletosSeleccionados: state.boletosSeleccionados.filter(b => b.id !== boletoId)
-    })),
-
-
-
-  on(BoletoActions.addBoletoSeleccionado, (state, { boleto }) => {
-    const yaExiste = state.boletosSeleccionados.some(b => b.id === boleto.id);
-
-    const actualizado = {
-      ...state,
-      boletos: state.boletos.map(b =>
-        b.id === boleto.id ? boleto : b
-      ),
-      boletosSeleccionados: boleto.estado === 'ocupado' 
-        ? yaExiste
-          ? state.boletosSeleccionados
-          : [...state.boletosSeleccionados, boleto]
-        : state.boletosSeleccionados.filter(b => b.id !== boleto.id)
-    };
-
-    // ⚠️ Esto puede romper el patrón de NgRx
-    console.log('🟥 REDUCER (NO recomendado):', actualizado);
-    return actualizado;
-  }),
-on(BoletoActions.updateBoleto, (state, { boleto }) => ({
-  ...state,
-  boletos: state.boletos.map(b => b.id === boleto.id ? boleto : b),
-  boletosSeleccionados: state.boletosSeleccionados.map(b =>
-    b.id === boleto.id ? boleto : b
-  )
-})),
-
-
-
-  on(BoletoActions.resetSeleccion, (state) => ({
+  on(BoletoActions.addBoleto, (state, { sorteoId, boleto }) => ({
     ...state,
-    boletosSeleccionados: []
+    boletos: {
+      ...state.boletos,
+      [sorteoId]: [...(state.boletos[sorteoId] || []), boleto],
+    },
   })),
 
-
-  
-on(BoletoActions.deseleccionarYLiberarBoleto, (state, { boletoId }) => {
-  console.log('🟡 Tipo de boletoId:', typeof boletoId);
-  console.log('🟡 Estado actual:', state.boletosSeleccionados.map(b => ({ id: b.id, type: typeof b.id })));
-
-  console.log('🟡 Reducer >> Deseleccionando boleto:', boletoId);
-
-  const boletosActualizados = state.boletos.map(b =>
-    b.id === boletoId ? { ...b, estado: 'disponible' as 'disponible' } : b
-  );
-
-  const seleccionadosActualizados = state.boletosSeleccionados.filter(b => b.id !== boletoId);
-
-  console.log('✅ Nuevo estado de boletos:', boletosActualizados);
-  console.log('✅ Nuevo estado de seleccionados:', seleccionadosActualizados);
-
-  return {
+  on(BoletoActions.removeBoleto, (state, { sorteoId, boletoId }) => ({
     ...state,
-    boletos: boletosActualizados,
-    boletosSeleccionados: seleccionadosActualizados
-  };
-}),
-on(BoletoActions.updateBoletoEnStore, (state, { boleto }) => ({
-  ...state,
-  boletos: state.boletos.map(b => b.id === boleto.id ? boleto : b),
-  boletosSeleccionados: state.boletosSeleccionados.map(b =>
-    b.id === boleto.id ? boleto : b
-  )
-})),
-on(BoletoActions.deseleccionarBoletos, (state, { ids }) => ({
-  ...state,
-  boletosSeleccionados: state.boletosSeleccionados.filter(b => !ids.includes(b.id))
-}))
+    boletos: {
+      ...state.boletos,
+      [sorteoId]: (state.boletos[sorteoId] || []).filter(b => b.id !== boletoId),
+    },
+    boletosSeleccionados: {
+      ...state.boletosSeleccionados,
+      [sorteoId]: (state.boletosSeleccionados[sorteoId] || []).filter(b => b.id !== boletoId),
+    },
+  })),
 
-  );
+  on(BoletoActions.addBoletoSeleccionado, (state, { sorteoId, boleto }) => {
+    const seleccionados = state.boletosSeleccionados[sorteoId] || [];
+    const yaExiste = seleccionados.some(b => b.id === boleto.id);
+
+    return {
+      ...state,
+      boletos: {
+        ...state.boletos,
+        [sorteoId]: (state.boletos[sorteoId] || []).map(b => b.id === boleto.id ? boleto : b),
+      },
+      boletosSeleccionados: {
+        ...state.boletosSeleccionados,
+        [sorteoId]:
+          boleto.estado === 'ocupado'
+            ? yaExiste
+              ? seleccionados
+              : [...seleccionados, boleto]
+            : seleccionados.filter(b => b.id !== boleto.id),
+      },
+    };
+  }),
+
+  on(BoletoActions.updateBoleto, (state, { sorteoId, boleto }) => ({
+    ...state,
+    boletos: {
+      ...state.boletos,
+      [sorteoId]: (state.boletos[sorteoId] || []).map(b => b.id === boleto.id ? boleto : b),
+    },
+    boletosSeleccionados: {
+      ...state.boletosSeleccionados,
+      [sorteoId]: (state.boletosSeleccionados[sorteoId] || []).map(b => b.id === boleto.id ? boleto : b),
+    },
+  })),
+
+  on(BoletoActions.updateBoletoEnStore, (state, { sorteoId, boleto }) => ({
+    ...state,
+    boletos: {
+      ...state.boletos,
+      [sorteoId]: (state.boletos[sorteoId] || []).map(b => b.id === boleto.id ? boleto : b),
+    },
+    boletosSeleccionados: {
+      ...state.boletosSeleccionados,
+      [sorteoId]: (state.boletosSeleccionados[sorteoId] || []).map(b => b.id === boleto.id ? boleto : b),
+    },
+  })),
+
+  on(BoletoActions.deseleccionarYLiberarBoleto, (state, { sorteoId, boletoId }) => {
+    const boletosActualizados = (state.boletos[sorteoId] || []).map(b =>
+      b.id === boletoId ? { ...b, estado: 'disponible' as const } : b
+    );
+
+    const seleccionadosActualizados = (state.boletosSeleccionados[sorteoId] || []).filter(b => b.id !== boletoId);
+
+    return {
+      ...state,
+      boletos: {
+        ...state.boletos,
+        [sorteoId]: boletosActualizados,
+      },
+      boletosSeleccionados: {
+        ...state.boletosSeleccionados,
+        [sorteoId]: seleccionadosActualizados,
+      },
+    };
+  }),
+
+  on(BoletoActions.deseleccionarBoletos, (state, { sorteoId, ids }) => ({
+    ...state,
+    boletosSeleccionados: {
+      ...state.boletosSeleccionados,
+      [sorteoId]: (state.boletosSeleccionados[sorteoId] || []).filter(b => !ids.includes(b.id)),
+    },
+  })),
+
+  on(BoletoActions.resetSeleccion, (state, { sorteoId }) => ({
+    ...state,
+    boletosSeleccionados: {
+      ...state.boletosSeleccionados,
+      [sorteoId]: [],
+    },
+  }))
+);

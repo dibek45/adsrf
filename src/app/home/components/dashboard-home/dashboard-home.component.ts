@@ -12,11 +12,13 @@ import { MenuBottomComponent } from '../../../menu-bottom/menu-bottom.component'
 import { SorteoSelectorComponent } from '../sorteo-selector-component/sorteo-selector-component.component';
 import { MenuSettingsComponent } from '../../../dashboard/components/menu-settings/menu-settings.component';
 import { CommonModule } from '@angular/common';
+import { Sorteo } from '../../../state/boleto/boleto.model';
+
 
 @Component({
   selector: 'app-dashboard-home',
-  standalone:true,
-  imports:[       
+  standalone: true,
+  imports: [
     CommonModule,
     TotalRafflesComponent,
     TicketStatusComponent,
@@ -25,67 +27,81 @@ import { CommonModule } from '@angular/common';
     TopSellersComponent,
     SalesProgressComponent,
     NextRaffleComponent,
-    RecentActivityComponent, MenuBottomComponent,
-  SorteoSelectorComponent, MenuSettingsComponent ],
+    RecentActivityComponent,
+    MenuBottomComponent,
+    SorteoSelectorComponent,
+    MenuSettingsComponent,
+  ],
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.scss']
 })
 export class DashboardHomeComponent {
-
-  constructor(private router:Router){
-
-  }
-  sorteos: number[] = [];
-
-ngOnInit() {
-  const sorteosStr = localStorage.getItem('sorteos');
-  if (sorteosStr) {
-    this.sorteos = JSON.parse(sorteosStr);
-    if (this.sorteos.length > 1) {
-      this.abrirSelectorDeSorteo(); // modal si hay más de uno
-    }
-  }
-}
-  // Estos vendrán del estado de Redux más adelante
-  totalSorteos = 3;
-  boletos = {
-    total: 200,
-    disponibles: 50,
-    apartados: 100,
-    vendidos: 50,
-  };
-  recaudado = 15000;
-  porRecaudar = 5000;
-  topBuyers: any[] = [];
-  topSellers: any[] = [];
-  progresoVentas = [10, 30, 60, 80, 100];
+  sorteosVisibles: boolean[] = [];
+  mostrarSelector = false;
+  menuAbierto: boolean = false;
+   progresoVentas = [10, 30, 60, 80, 100];
   proximoSorteo = new Date('2025-08-30T18:00:00');
+
+  // 🔥 ESTE array sí debe tener los datos completos por sorteo:
+  sorteos: {
+    id: number;
+    nombre: string;
+    boletos: any;
+    recaudado: number;
+    porRecaudar: number;
+    progresoVentas: number[];
+    fechaSorteo: string | Date;
+    topBuyers: any[];
+    topSellers: any[];
+  }[] = [];
+
   actividadReciente = ['Boleto #100 pagado', 'Nuevo sorteo creado'];
 
+  constructor(private router: Router) {}
+ngOnInit() {
+  const sorteosStr = localStorage.getItem('sorteos');
 
-  mostrarSelector = false;
+  if (sorteosStr) {
+    try {
+      this.sorteos = JSON.parse(sorteosStr);
 
-amostrarSelector = false;
+      if (!Array.isArray(this.sorteos) || this.sorteos.length === 0) {
+        console.warn('[⚠] Sorteos está vacío o no es un array:', this.sorteos);
+      } else {
+        console.log('[✅] Sorteos cargados:', this.sorteos);
+      }
 
+    } catch (err) {
+      console.error('[❌] Error al parsear sorteos del localStorage:', err);
+    }
+  } else {
+    console.warn('[⚠] No se encontró "sorteos" en localStorage');
+  }
 
-abrirSelectorDeSorteo() {
-  this.mostrarSelector = true;
+  this.sorteosVisibles = this.sorteos.map(() => false);
 }
 
-onSorteoSeleccionado(id: number) {
-localStorage.setItem('sorteoId', id.toString());
-  this.mostrarSelector = false;
 
-  // Si usas rutas como /rifa/:id
-  this.router.navigate(['/rifa', id]);
+  abrirSelectorDeSorteo() {
+    this.mostrarSelector = true;
+  }
 
+  cerrarModal() {
+    this.mostrarSelector = false;
+  }
+
+  onSorteoSeleccionado(id: number) {
+    localStorage.setItem('sorteoId', id.toString());
+    this.mostrarSelector = false;
+    this.router.navigate(['/rifa', id]);
+  }
+
+  toggleMenu() {
+    this.menuAbierto = !this.menuAbierto;
+  }
+
+  toggleSorteo(index: number) {
+    this.sorteosVisibles[index] = !this.sorteosVisibles[index];
+  }
 }
 
-menuAbierto: boolean = false;
-
-toggleMenu() {
-   this.menuAbierto = !this.menuAbierto;
-
-}
-
-}
