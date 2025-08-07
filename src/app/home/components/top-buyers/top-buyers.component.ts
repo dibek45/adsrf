@@ -9,6 +9,23 @@ import { Component, Input } from '@angular/core';
   styleUrl: './top-buyers.component.scss'
 })
 export class TopBuyersComponent {
-  @Input() buyers: any[] = []; // 👈 ESTA LÍNEA ES CLAVE
+  @Input() buyers: { nombre: string; totalBoletos: number; telefono?: string }[] = [];
 
+  modalVisible = false;
+
+  openModal() {
+    this.modalVisible = true;
+  }
+
+  closeModal() {
+    this.modalVisible = false;
+  }
+
+  get top10() {
+    return this.buyers.slice(0, 10);
+  }
+
+  whatsappLink(phone?: string): string {
+    return phone ? `https://wa.me/${phone.replace(/\D/g, '')}` : '#';
+  }
 }

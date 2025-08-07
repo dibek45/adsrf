@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Boleto } from '../../../state/boleto/boleto.model';
 
 @Component({
   selector: 'app-ticket-status',
@@ -8,10 +9,19 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./ticket-status.component.scss']
 })
 export class TicketStatusComponent {
-  @Input() boletos: {
-    total: number;
-    disponibles: number;
-    apartados: number;
-    vendidos: number;
-  } = { total: 0, disponibles: 0, apartados: 0, vendidos: 0 };
+ @Input() boletos: Boleto[] = [];
+
+ get total() {
+  return this.boletos.length;
+}
+get disponibles() {
+  return this.boletos.filter(b => b.estado === 'disponible').length;
+}
+get apartados() {
+  return this.boletos.filter(b => b.estado === 'ocupado').length;
+}
+get vendidos() {
+  return this.boletos.filter(b => b.estado === 'pagado').length;
+}
+
 }

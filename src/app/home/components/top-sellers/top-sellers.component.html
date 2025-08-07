@@ -1,4 +1,4 @@
-<div class="top-card blue card">
+<div class="top-card blue card" (click)="noomplement()">
   <div class="icon-label">
     <span class="icon">👤</span>
     <div class="text">
@@ -7,7 +7,6 @@
     </div>
   </div>
   <div class="result">
-    <span class="name">{{ sellers[0]?.name || '-' }}</span>
-    <span class="count">{{ sellers[0]?.sales || 0 }}</span>
+
   </div>
 </div>

@@ -9,6 +9,8 @@ import { Component, Input } from '@angular/core';
   styleUrl: './top-sellers.component.scss'
 })
 export class TopSellersComponent {
+noomplement() {
+alert("Aun no disponible")}
   @Input() sellers: any[] = []; // 👈 Esto es lo que Angular necesita
 
 }

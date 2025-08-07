@@ -35,18 +35,19 @@
   border-radius: 4px;
   margin-bottom: 4px;
 }
-
 .available .icon {
-  background-color: #10b981;
+  background-color: #ffffff; // blanco
+  border: 1px solid #d1d5db; // bordecito gris claro para que no se pierda
 }
 
 .reserved .icon {
-  background-color: #f59e0b;
+  background-color: #3b82f6; // azul (tailwind blue-500)
 }
 
 .sold .icon {
-  background-color: #ef4444;
+  background-color: #10b981; // verde (tailwind green-500)
 }
+
 
 .count {
   font-weight: bold;

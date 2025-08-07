@@ -15,16 +15,15 @@
   <div *ngIf="sorteosVisibles[i]" class="sorteo-content">
 <app-ticket-status [boletos]="sorteo.boletos"></app-ticket-status>
 
-    <app-total-revenue 
-      [recaudado]="0" 
-      [porRecaudar]="0">
-    </app-total-revenue>
+<app-total-revenue 
+  [recaudado]="sorteo.recaudado" 
+  [porRecaudar]="sorteo.porRecaudar">
+</app-total-revenue>
 
-    <div class="top-wrapper">
-      <app-top-buyers [buyers]="[]"></app-top-buyers>
-      <app-top-sellers [sellers]="[]"></app-top-sellers>
-    </div>
-
+  <div class="top-wrapper">
+  <app-top-buyers [buyers]="sorteo.topBuyers"></app-top-buyers>
+  <app-top-sellers [sellers]="sorteo.topSellers"></app-top-sellers>
+</div>
     <app-sales-progress [progress]="sorteo.progresoVentas"></app-sales-progress>
     <app-next-raffle [deadline]="proximoSorteo"></app-next-raffle>
   </div>

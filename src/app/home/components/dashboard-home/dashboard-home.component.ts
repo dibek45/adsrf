@@ -14,6 +14,11 @@ import { MenuSettingsComponent } from '../../../dashboard/components/menu-settin
 import { CommonModule } from '@angular/common';
 import { Sorteo } from '../../../state/boleto/boleto.model';
 
+import { Store } from '@ngrx/store';
+import { selectBoletosPorSorteo } from '../../../state/boleto/boleto.selectors';
+import { Boleto } from '../../../state/boleto/boleto.model';
+import { take } from 'rxjs';
+import * as BoletoActions from '../../../../app/state/boleto/boleto.actions';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -57,29 +62,111 @@ export class DashboardHomeComponent {
 
   actividadReciente = ['Boleto #100 pagado', 'Nuevo sorteo creado'];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+  private store: Store
+  ) {}
 ngOnInit() {
   const sorteosStr = localStorage.getItem('sorteos');
 
-  if (sorteosStr) {
-    try {
-      this.sorteos = JSON.parse(sorteosStr);
-
-      if (!Array.isArray(this.sorteos) || this.sorteos.length === 0) {
-        console.warn('[⚠] Sorteos está vacío o no es un array:', this.sorteos);
-      } else {
-        console.log('[✅] Sorteos cargados:', this.sorteos);
-      }
-
-    } catch (err) {
-      console.error('[❌] Error al parsear sorteos del localStorage:', err);
-    }
-  } else {
+  if (!sorteosStr) {
     console.warn('[⚠] No se encontró "sorteos" en localStorage');
+    return;
   }
 
-  this.sorteosVisibles = this.sorteos.map(() => false);
+  try {
+    const sorteosCargados = JSON.parse(sorteosStr);
+    console.log('[✅] Sorteos cargados desde localStorage:', sorteosCargados);
+
+    if (!Array.isArray(sorteosCargados) || sorteosCargados.length === 0) {
+      console.warn('[⚠] Sorteos no es un array válido o está vacío');
+      return;
+    }
+
+    sorteosCargados.forEach((s: any, index: number) => {
+      console.log(`\n📦 Procesando sorteo con ID ${s.id} (${s.nombre})...`);
+
+      // 1. Disparar acción para cargar boletos
+      this.store.dispatch(BoletoActions.loadBoletos({ sorteoId: s.id }));
+
+      // 2. Suscribirse al store
+      this.store.select(selectBoletosPorSorteo(s.id)).subscribe((boletos: Boleto[]) => {
+        console.log(`🎟️ Boletos recibidos para sorteo ${s.id}:`, boletos);
+
+        const recaudado = boletos
+          .filter(b => b.estado === 'pagado')
+          .reduce((acc, b) => acc + (Number(b.precio) || 0), 0);
+
+        const total = boletos.reduce((acc, b) => acc + (Number(b.precio) || 0), 0);
+
+        const porRecaudar = total - recaudado;
+        const progreso = total > 0 ? Math.round((recaudado / total) * 100) : 0;
+
+        const compradoresMap = new Map<string, { nombre: string; total: number }>();
+        const vendedoresMap = new Map<string, { nombre: string; total: number }>();
+
+        boletos.forEach(b => {
+          const precio = Number(b.precio) || 0;
+
+          // Comprador (agrupa por ID o nombre)
+          if (b.estado === 'pagado') {
+            const compradorKey = b.comprador?.id?.toString() || `nombre:${b.comprador?.nombre}`;
+            if (compradorKey) {
+const actual = compradoresMap.get(compradorKey) || {
+  nombre: b.comprador?.nombre || 'Desconocido',
+  total: 0,
+  telefono: b.comprador?.telefono || null // ✅ aquí el número
+};
+actual.total += precio;
+              actual.total += precio;
+              compradoresMap.set(compradorKey, actual);
+              console.log('✅ Comprador agregado:', actual);
+            } else {
+              console.warn('⚠️ Comprador no identificado en boleto pagado:', b);
+            }
+
+            // Vendedor (agrupa por ID o nombre)
+            const vendedorKey = b.vendedor?.id?.toString() || `nombre:${b.vendedor?.nombre}`;
+            if (vendedorKey) {
+              const actual = vendedoresMap.get(vendedorKey) || { nombre: b.vendedor?.nombre || 'Desconocido', total: 0 };
+              actual.total += precio;
+              vendedoresMap.set(vendedorKey, actual);
+              console.log('✅ Vendedor agregado:', actual);
+            } else {
+              console.warn('⚠️ Vendedor no identificado en boleto pagado:', b);
+            }
+          }
+        });
+
+        const topBuyers = Array.from(compradoresMap.values())
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5);
+
+        const topSellers = Array.from(vendedoresMap.values())
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5);
+
+        const sorteoProcesado = {
+          id: s.id,
+          nombre: s.nombre,
+          boletos,
+          recaudado,
+          porRecaudar,
+          progresoVentas: [progreso],
+          fechaSorteo: s.fechaSorteo || '',
+          topBuyers,
+          topSellers,
+        };
+
+        this.sorteos[index] = sorteoProcesado;
+        console.log('✅ Sorteo procesado:', sorteoProcesado);
+      });
+    });
+  } catch (err) {
+    console.error('[❌] Error al parsear "sorteos" desde localStorage:', err);
+  }
 }
+
+
 
 
   abrirSelectorDeSorteo() {

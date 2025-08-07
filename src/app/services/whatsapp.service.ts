@@ -11,7 +11,7 @@ export class WhatsAppService {
   private store = inject(Store);
   private appRef = inject(ApplicationRef);
   private injector = inject(Injector);
-  private readonly numeroWhatsApp = '5216146087479';
+  private readonly numeroWhatsApp = '0';
   private readonly cuentaSTP = '728969000032810021';
 
 
