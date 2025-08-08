@@ -1,7 +1,7 @@
 <div class="overlay" (click)="cerrar()">
   <div class="modal" (click)="$event.stopPropagation()">
     <button class="cerrar-icono" (click)="cerrar()">×</button>
-    <h2>Cambiar estado del boleto</h2>
+    <h2>Informacion del boleto</h2>
     <p>#{{ boleto.numero }}</p>
 
     <!-- ⚠️ Mostrar mensaje de reasignación o asignación inicial -->
@@ -55,13 +55,9 @@
       </div>
     </div>
 
-  <!-- 👁 Info del comprador si ya fue comprado -->
-<div *ngIf="boleto.estado === 'ocupado' || boleto.estado === 'pagado'" class="info-comprador">
-  <p>👤 <strong>Cliente:</strong> {{ boleto.comprador?.nombre || 'Desconocido' }}</p>
-  <p>📞 <strong>Teléfono:</strong> {{ boleto.comprador?.telefono || 'N/A' }}</p>
-  <p>🗓️ <strong>Fecha compra:</strong> {{ boleto.fechaCompra }}</p>
-
-  <!-- ✅ Botón WhatsApp -->
+<!-- 👁 Info del estado actual y datos del comprador -->
+<div *ngIf="!reasignacion" class="info-comprador">
+    <!-- ✅ Botón WhatsApp -->
   <a
     *ngIf="boleto.comprador?.telefono"
     [href]="'https://wa.me/52' + boleto.comprador.telefono"
@@ -69,15 +65,59 @@
     target="_blank"
     rel="noopener noreferrer"
   >
-    <i class="fa-brands fa-whatsapp"></i> Escribir por WhatsApp
+    <i class="fa-brands fa-whatsapp"></i> WhatsApp
   </a>
+  <p>
+    <strong>Estado actual:</strong>
+    <span *ngIf="boleto.estado === 'disponible'">🎟️ Disponible</span>
+    <span *ngIf="boleto.estado === 'ocupado'">🟡 Ocupado</span>
+    <span *ngIf="boleto.estado === 'pagado'">🟢 Pagado</span>
+  </p>
+
+  <p *ngIf="boleto.comprador?.nombre">
+    👤 <strong>Cliente:</strong> {{ boleto.comprador.nombre }}
+  </p>
+
+  <p *ngIf="boleto.comprador?.telefono">
+    📞 <strong>Teléfono:</strong> {{ boleto.comprador.telefono }}
+  </p>
+
+  <p *ngIf="boleto.fechaCompra">
+    🗓️ <strong>Fecha de compra:</strong> {{ boleto.fechaCompra | date:'medium' }}
+  </p>
+
+
+
+  <!-- 🎯 Botones para cambiar de estado -->
+  <div class="estados">
+    <button
+      *ngIf="boleto.estado !== 'disponible'"
+      class="boleto-btn disponible"
+      (click)="cambiarEstado('disponible')"
+    >
+      Cambiar a Disponible
+    </button>
+
+    <button
+      *ngIf="boleto.estado !== 'ocupado'"
+      class="boleto-btn ocupado"
+      (click)="cambiarEstado('ocupado')"
+    >
+      Cambiar a Ocupado
+    </button>
+
+    <button
+      *ngIf="boleto.estado !== 'pagado'"
+      class="boleto-btn pagado"
+      (click)="cambiarEstado('pagado')"
+    >
+      Cambiar a Pagado
+    </button>
+  </div>
 </div>
 
+
     <!-- Botones de cambiar estado si no es reasignación -->
-    <div *ngIf="!reasignacion" class="estados">
-      <button class="boleto-btn disponible" (click)="cambiarEstado('disponible')">Disponible</button>
-      <button class="boleto-btn ocupado" (click)="cambiarEstado('ocupado')">Ocupado</button>
-      <button class="boleto-btn pagado" (click)="cambiarEstado('pagado')">Pagado</button>
-    </div>
+ 
   </div>
 </div>

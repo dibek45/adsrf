@@ -38,21 +38,32 @@ nuevoTelefono: string = '';
     this.estadoSeleccionado.emit(null);
   }
 
-  emitirReasignacion() {
-  if (!this.nuevoNombre || !this.nuevoTelefono) {
-    alert('Debes ingresar nombre y teléfono');
+emitirReasignacion() {
+  if (!this.nuevoNombre.trim()) {
+    alert('Debes ingresar un nombre válido');
+    return;
+  }
+
+  if (!/^\d{10}$/.test(this.nuevoTelefono)) {
+    alert('El teléfono debe tener exactamente 10 dígitos');
     return;
   }
 
   this.reasignar.emit({
     boleto: this.boleto,
-    nombre: this.nuevoNombre,
+    nombre: this.nuevoNombre.trim(),
     telefono: this.nuevoTelefono
   });
 }
+
 emitirReasignacionConEstado(estado: 'ocupado' | 'pagado') {
-  if (!this.nuevoNombre || !this.nuevoTelefono) {
-    alert('Debes ingresar nombre y teléfono');
+  if (!this.nuevoNombre.trim()) {
+    alert('Debes ingresar un nombre válido');
+    return;
+  }
+
+  if (!/^\d{10}$/.test(this.nuevoTelefono)) {
+    alert('El teléfono debe tener exactamente 10 dígitos');
     return;
   }
 
@@ -62,13 +73,14 @@ emitirReasignacionConEstado(estado: 'ocupado' | 'pagado') {
       estado,
       comprador: {
         ...this.boleto.comprador,
-        nombre: this.nuevoNombre,
+        nombre: this.nuevoNombre.trim(),
         telefono: this.nuevoTelefono
       }
     },
-    nombre: this.nuevoNombre,
+    nombre: this.nuevoNombre.trim(),
     telefono: this.nuevoTelefono
   });
 }
+
 
 }
