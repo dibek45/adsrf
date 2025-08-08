@@ -6,7 +6,7 @@
   <div class="top-row">
     <div class="user">
   <i class="fa-solid fa-user-circle"></i>
-  {{ nombreSorteo }}
+  {{ nombreUsuario }}
 </div>
 
 
@@ -100,8 +100,12 @@
 
 <div class="tickets" *ngIf="boletosEncontrados.length > 0 && (numeroBuscado?.length == 10 || estadoFiltrado)">
 
+
+  
+  <!-- ⛔ MENSAJE SI NO HAY RESULTADOS -->
+ 
   <ng-container *ngFor="let estado of estadosDisponibles">
-    <br>
+    
   <ng-container *ngIf="filtrarPorEstado(estado).length > 0">
 
     <div class="estado-header">
@@ -153,7 +157,10 @@
   (closed)="cerrarModal()">
 </app-sorteo-selector>
 
-
+ <h1 class="no-result"
+      *ngIf="!actualizandoBoleto && boletosEncontrados.length === 0 && (estadoFiltrado || numeroBuscado)">
+    😕 No hay boletos que coincidan con tu búsqueda o filtro.
+  </h1>
 
 <app-menu-bottom (abrirModalSorteos)="abrirSelectorDeSorteo()"   (abrirMenuConfig)="toggleMenu()">
 

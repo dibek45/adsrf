@@ -190,5 +190,12 @@ actual.total += precio;
   toggleSorteo(index: number) {
     this.sorteosVisibles[index] = !this.sorteosVisibles[index];
   }
+
+
+  filtrarYRedirigir(sorteoId: number, estado: 'disponible' | 'ocupado' | 'pagado') {
+  localStorage.setItem('sorteoId', sorteoId.toString());
+  localStorage.setItem('estadoFiltrado', estado);
+this.router.navigate(['/rifa', sorteoId], { queryParams: { estado } });
+}
 }
 

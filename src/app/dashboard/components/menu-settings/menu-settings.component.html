@@ -1,26 +1,9 @@
 <div class="full-menu">
-  <div class="menu-header" (click)="onCerrar()">
+  <div class="menu-header">
     <h2><i class="fa-solid fa-bars"></i> Menú</h2>
-    <button  class="close-btn">
+    <button class="close-btn" (click)="onCerrar()">
       <i class="fa-solid fa-xmark"></i>
     </button>
-  </div>
-
-  <div class="menu-section">
-    <h3><i class="fa-solid fa-ticket"></i> Boletos</h3>
-    <ul>
-      <li><i class="fa-solid fa-eye"></i> Ver todos los boletos</li>
-      <li><i class="fa-solid fa-plus"></i> Generar boletos</li>
-      <li><i class="fa-solid fa-magnifying-glass"></i> Buscar por número</li>
-    </ul>
-  </div>
-
-  <div class="menu-section">
-    <h3><i class="fa-solid fa-users"></i> Compradores</h3>
-    <ul>
-      <li><i class="fa-solid fa-user-check"></i> Ver compradores</li>
-      <li><i class="fa-solid fa-user-pen"></i> Editar comprador</li>
-    </ul>
   </div>
 
   <div class="menu-section">
@@ -35,7 +18,7 @@
   <div class="menu-section">
     <h3><i class="fa-solid fa-gear"></i> Configuración</h3>
     <ul>
-<li (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</li>
+      <li (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</li>
     </ul>
   </div>
 </div>

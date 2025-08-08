@@ -218,7 +218,7 @@ onSorteoSeleccionado(id: number) {
 
 
 ngOnInit(): void {
-  // Cargar los sorteos disponibles (por ejemplo, para el modal)
+  // Cargar sorteos desde localStorage
   const sorteosStr = localStorage.getItem('sorteos');
   if (sorteosStr) {
     this.sorteos = JSON.parse(sorteosStr);
@@ -226,6 +226,7 @@ ngOnInit(): void {
 
   this.nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
 
+  // Escucha cambios en la URL (params y queryParams)
   this.sub.add(
     this.route.params.subscribe(params => {
       const nuevoId = Number(params['id']) || Number(localStorage.getItem('sorteoId'));
@@ -238,12 +239,24 @@ ngOnInit(): void {
       this.sorteoId = nuevoId;
       localStorage.setItem('sorteoId', this.sorteoId.toString());
 
-      this.inicializarSorteo();
+      // 🔥 Leemos el filtro por estado desde los queryParams
+      this.route.queryParams.pipe(take(1)).subscribe(q => {
+        const estado = q['estado'] as 'disponible' | 'pagado' | 'ocupado' | null;
+
+        if (estado === 'disponible' || estado === 'pagado' || estado === 'ocupado') {
+          this.estadoFiltrado = estado;
+          console.log('📥 Filtro recibido desde URL:', estado);
+        } else {
+          this.estadoFiltrado = null;
+          console.log('📤 Sin filtro desde URL. Mostrará todo.');
+        }
+
+        this.inicializarSorteo(); // Solo inicializa una vez que ya tienes sorteoId y filtro
+      });
     })
   );
 
   this.nombreSorteo = localStorage.getItem('sorteoNombre') || `Sorteo #${this.sorteoId}`;
-
 }
 
 
@@ -354,19 +367,17 @@ enviarInfo(): void {
   }
 }
 
-
 filtrarPorDashboard(estado: 'disponible' | 'pagado' | 'ocupado') {
   console.log('📥 Filtro seleccionado:', estado);
+  this.actualizandoBoleto = true;
 
-  this.estadoFiltrado = estado;
-
-  this.boletosEncontrados = this.boletos.filter(b => b.estado === estado);
-
-  console.log(`🎯 Boletos filtrados (${estado}):`, this.boletosEncontrados);
-
-  this.numeroBuscado = ''; // Limpiar campo de búsqueda
-
-  console.log('🔄 númeroBuscado reseteado');
+  setTimeout(() => {
+    this.estadoFiltrado = estado;
+    this.boletosEncontrados = this.boletos.filter(b => b.estado === estado);
+    console.log(`🎯 Boletos filtrados (${estado}):`, this.boletosEncontrados);
+    this.numeroBuscado = '';
+    this.actualizandoBoleto = false;
+  }, 300);
 }
 
 mostrarInfoBoleto(boleto: Boleto) {
