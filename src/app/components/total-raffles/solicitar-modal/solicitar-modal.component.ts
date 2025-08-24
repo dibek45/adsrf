@@ -109,11 +109,12 @@ export class SolicitarModalComponent {
     const json = {
       sorteo: { ...this.form }
     };
+    this.closed.emit();
+  location.reload();
 
     const mensaje = encodeURIComponent(`📦 Nueva solicitud de sorteo:\n\n${JSON.stringify(json, null, 2)}`);
     const numero = '4461796235';
     const link = `https://wa.me/52${numero}?text=${mensaje}`;
     window.open(link, '_blank');
-    this.closed.emit();
   }
 }

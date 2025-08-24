@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Boleto } from '../../../state/boleto/boleto.model';
+import { Boleto } from '../../state/boleto/boleto.model';
 
 @Component({
   selector: 'app-ticket-status',

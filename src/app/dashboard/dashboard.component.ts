@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 import { ToastService } from '../toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuSettingsComponent } from './components/menu-settings/menu-settings.component';
-import { SorteoSelectorComponent } from '../home/components/sorteo-selector-component/sorteo-selector-component.component';
+import { SorteoSelectorComponent } from '../components/sorteo-selector-component/sorteo-selector-component.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,7 +31,7 @@ import { SorteoSelectorComponent } from '../home/components/sorteo-selector-comp
 })
 export class DashboardComponent {
   mostrarSelector = false;
-
+telefonoBusqueda: string = '';
 sorteoId: number = 0;
   nombreSorteo: any;
 
@@ -48,6 +48,8 @@ nombreUsuario: string = '';
 estadoFiltrado: 'disponible' | 'pagado' | 'ocupado' | null = null;
 
 @Input() reasignacion: boolean = false;
+buscando = false;
+
   // 🔥 ESTE array sí debe tener los datos completos por sorteo:
   sorteos: {
     id: number;
@@ -78,7 +80,7 @@ modalBoleto: Boleto | null = null;
   apartados = 0;
   boletoActualizadoId: string | null = null;
 
-telefonoIngresado: string = '';
+resetSearchFlag = false;
 
   constructor(private store: Store,
      private boletoService: BoletoService,
@@ -103,26 +105,22 @@ boletosEncontrados: Boleto[] = [];
 
 
 onTelefonoChange(numero: string) {
+  this.buscando = true;
   const telefono = numero.trim();
   this.numeroBuscado = telefono;
-  console.log('📞 Teléfono ingresado:', telefono);
 
   if (!telefono || telefono.length < 2) {
     this.boletosEncontrados = [];
+    this.buscando = false;
     return;
   }
 
-  // 🔍 Paso 1: Filtrar boletos válidos que coincidan con el teléfono
   const encontrados = this.boletos.filter(
-    b =>
-      b.comprador?.telefono?.trim().includes(telefono) &&
-      b.comprador?.nombre?.trim()   );
+    b => b.comprador?.telefono?.trim().includes(telefono) &&
+         b.comprador?.nombre?.trim()
+  );
 
-  console.log('📋 Encontrados (sin filtrar duplicados):', encontrados);
-
-  // 🔐 Paso 2: Eliminar duplicados por comprador.id
   const compradorMap = new Map<number, Boleto>();
-
   for (const b of encontrados) {
     const id = b.comprador?.id;
     if (id && !compradorMap.has(id)) {
@@ -130,14 +128,17 @@ onTelefonoChange(numero: string) {
     }
   }
 
-  // 🎯 Resultado limpio
   this.boletosEncontrados = Array.from(compradorMap.values());
-
-  console.log('✅ Boletos únicos por comprador.id:', this.boletosEncontrados);
+  this.buscando = false;
 }
 
 
 
+resultadosBusqueda = 0;
+
+onResultadosChange(count: number) {
+  this.resultadosBusqueda = count;
+}
 
 estadosDisponibles = ['pagado', 'ocupado', 'reservado', 'cancelado', 'disponible'];
 filtrarPorEstado(estado: string): Boleto[] {
@@ -368,13 +369,15 @@ enviarInfo(): void {
 }
 
 filtrarPorDashboard(estado: 'disponible' | 'pagado' | 'ocupado') {
+  // 🔁 alternar para que el hijo reciba un valor distinto y se dispare el @Input()
+  this.resetSearchFlag = !this.resetSearchFlag;
+
   console.log('📥 Filtro seleccionado:', estado);
   this.actualizandoBoleto = true;
 
   setTimeout(() => {
     this.estadoFiltrado = estado;
     this.boletosEncontrados = this.boletos.filter(b => b.estado === estado);
-    console.log(`🎯 Boletos filtrados (${estado}):`, this.boletosEncontrados);
     this.numeroBuscado = '';
     this.actualizandoBoleto = false;
   }, 300);
@@ -448,6 +451,8 @@ abrirSelectorDeSorteo() {
 cerrarModal() {
   this.mostrarSelector = false;
 }
+
+
 }
 
 

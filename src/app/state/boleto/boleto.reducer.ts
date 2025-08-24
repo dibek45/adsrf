@@ -1,5 +1,4 @@
 // boleto.reducer.ts
-
 import { createReducer, on } from '@ngrx/store';
 import * as BoletoActions from './boleto.actions';
 import { Boleto } from './boleto.model';
@@ -17,6 +16,7 @@ export const initialState: BoletoState = {
 export const boletoReducer = createReducer(
   initialState,
 
+  // Cargar boletos por sorteo
   on(BoletoActions.loadBoletosSuccess, (state, { sorteoId, boletos }) => {
     const seleccionados = state.boletosSeleccionados[sorteoId] || [];
 
@@ -36,6 +36,7 @@ export const boletoReducer = createReducer(
     };
   }),
 
+  // Agregar un boleto
   on(BoletoActions.addBoleto, (state, { sorteoId, boleto }) => ({
     ...state,
     boletos: {
@@ -44,6 +45,7 @@ export const boletoReducer = createReducer(
     },
   })),
 
+  // Eliminar un boleto
   on(BoletoActions.removeBoleto, (state, { sorteoId, boletoId }) => ({
     ...state,
     boletos: {
@@ -56,6 +58,7 @@ export const boletoReducer = createReducer(
     },
   })),
 
+  // Seleccionar un boleto
   on(BoletoActions.addBoletoSeleccionado, (state, { sorteoId, boleto }) => {
     const seleccionados = state.boletosSeleccionados[sorteoId] || [];
     const yaExiste = seleccionados.some(b => b.id === boleto.id);
@@ -69,7 +72,7 @@ export const boletoReducer = createReducer(
       boletosSeleccionados: {
         ...state.boletosSeleccionados,
         [sorteoId]:
-          boleto.estado === 'ocupado'
+          boleto.estado === 'ocupado' || boleto.estado === 'seleccionado'
             ? yaExiste
               ? seleccionados
               : [...seleccionados, boleto]
@@ -78,6 +81,7 @@ export const boletoReducer = createReducer(
     };
   }),
 
+  // Actualizar boleto manualmente
   on(BoletoActions.updateBoleto, (state, { sorteoId, boleto }) => ({
     ...state,
     boletos: {
@@ -90,6 +94,7 @@ export const boletoReducer = createReducer(
     },
   })),
 
+  // Actualizar desde socket
   on(BoletoActions.updateBoletoEnStore, (state, { sorteoId, boleto }) => ({
     ...state,
     boletos: {
@@ -102,6 +107,7 @@ export const boletoReducer = createReducer(
     },
   })),
 
+  // Deseleccionar y liberar
   on(BoletoActions.deseleccionarYLiberarBoleto, (state, { sorteoId, boletoId }) => {
     const boletosActualizados = (state.boletos[sorteoId] || []).map(b =>
       b.id === boletoId ? { ...b, estado: 'disponible' as const } : b
@@ -122,6 +128,7 @@ export const boletoReducer = createReducer(
     };
   }),
 
+  // Deseleccionar varios
   on(BoletoActions.deseleccionarBoletos, (state, { sorteoId, ids }) => ({
     ...state,
     boletosSeleccionados: {
@@ -130,6 +137,7 @@ export const boletoReducer = createReducer(
     },
   })),
 
+  // Reset selección
   on(BoletoActions.resetSeleccion, (state, { sorteoId }) => ({
     ...state,
     boletosSeleccionados: {

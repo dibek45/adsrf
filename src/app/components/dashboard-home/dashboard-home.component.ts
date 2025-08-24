@@ -8,17 +8,17 @@ import { TotalRafflesComponent } from '../total-raffles/total-raffles.component'
 import { TopBuyersComponent } from '../top-buyers/top-buyers.component';
 import { TopSellersComponent } from '../top-sellers/top-sellers.component';
 import { Router } from '@angular/router';
-import { MenuBottomComponent } from '../../../menu-bottom/menu-bottom.component';
+import { MenuBottomComponent } from '../../menu-bottom/menu-bottom.component';
 import { SorteoSelectorComponent } from '../sorteo-selector-component/sorteo-selector-component.component';
-import { MenuSettingsComponent } from '../../../dashboard/components/menu-settings/menu-settings.component';
+import { MenuSettingsComponent } from '../../dashboard/components/menu-settings/menu-settings.component';
 import { CommonModule } from '@angular/common';
-import { Sorteo } from '../../../state/boleto/boleto.model';
+import { Sorteo } from '../../state/boleto/boleto.model';
 
 import { Store } from '@ngrx/store';
-import { selectBoletosPorSorteo } from '../../../state/boleto/boleto.selectors';
-import { Boleto } from '../../../state/boleto/boleto.model';
+import { selectBoletosPorSorteo } from '../../state/boleto/boleto.selectors';
+import { Boleto } from '../../state/boleto/boleto.model';
 import { take } from 'rxjs';
-import * as BoletoActions from '../../../../app/state/boleto/boleto.actions';
+import * as BoletoActions from '../../state/boleto/boleto.actions';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -40,7 +40,7 @@ import * as BoletoActions from '../../../../app/state/boleto/boleto.actions';
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.scss']
 })
-export class DashboardHomeComponent {
+export class MisRifasComponent {
   sorteosVisibles: boolean[] = [];
   mostrarSelector = false;
   menuAbierto: boolean = false;
@@ -165,9 +165,6 @@ actual.total += precio;
     console.error('[❌] Error al parsear "sorteos" desde localStorage:', err);
   }
 }
-
-
-
 
   abrirSelectorDeSorteo() {
     this.mostrarSelector = true;

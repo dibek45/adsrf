@@ -7,7 +7,6 @@
     <button class="btn-solicitar" (click)="abrirModal()">Solicitar</button>
   </div>
 
-  <!-- Lista de sorteos como botones blancos -->
   <div class="sorteos-list">
     <button 
       class="sorteo-btn" 
@@ -19,7 +18,6 @@
 
   <app-solicitar-modal 
     [visible]="modalAbierto"
-    (closed)="cerrarModal()"
-    >
+    (closed)="cerrarModal()">  <!-- 🔹 AQUÍ ES CLAVE -->
   </app-solicitar-modal>
 </div>

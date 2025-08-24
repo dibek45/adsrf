@@ -55,6 +55,9 @@
 <app-search-number
   [boletos]="boletos"
     (telefonoChange)="onTelefonoChange($event)"
+  [resetTelefono]="resetSearchFlag"
+  (resultadosChange)="onResultadosChange($event)"  
+
   (compradorSeleccionado)="onCompradorSeleccionado($event)"
 ></app-search-number>
 
@@ -156,11 +159,15 @@
   (selected)="onSorteoSeleccionado($event)"
   (closed)="cerrarModal()">
 </app-sorteo-selector>
+<h1 class="no-result"
+    *ngIf="!actualizandoBoleto 
+           && boletosEncontrados.length === 0 
+           && (estadoFiltrado || numeroBuscado) 
+           && !buscando
+           && resultadosBusqueda === 0"> <!-- 👈 usamos variable -->
+  😕 No hay boletos que coincidan con tu búsqueda o filtro.
+</h1>
 
- <h1 class="no-result"
-      *ngIf="!actualizandoBoleto && boletosEncontrados.length === 0 && (estadoFiltrado || numeroBuscado)">
-    😕 No hay boletos que coincidan con tu búsqueda o filtro.
-  </h1>
 
 <app-menu-bottom (abrirModalSorteos)="abrirSelectorDeSorteo()"   (abrirMenuConfig)="toggleMenu()">
 

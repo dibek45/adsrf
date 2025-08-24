@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./menu-settings.component.scss']
 })
 export class MenuSettingsComponent {
+goToSorteo() {
+throw new Error('Method not implemented.');
+}
 
   constructor(private router: Router){
 

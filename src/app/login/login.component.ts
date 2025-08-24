@@ -13,8 +13,8 @@ import { jwtDecode } from 'jwt-decode';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  username = 'RifasDatabase@gmail.com';
-  password = '12345678';
+  username = '';
+  password = '';
   error: string | null = null;
 
   constructor(private router: Router, private http: HttpClient) {}

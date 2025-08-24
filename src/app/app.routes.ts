@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './auth.guard';
-import { DashboardHomeComponent } from './home/components/dashboard-home/dashboard-home.component';
+import { MisRifasComponent } from './components/dashboard-home/dashboard-home.component';
 
 export const routes: Routes = [
   {
@@ -21,7 +21,7 @@ export const routes: Routes = [
   },
   {
   path: 'home',
-  component: DashboardHomeComponent,
+  component: MisRifasComponent,
   canActivate: [AuthGuard]
 }
 ];
